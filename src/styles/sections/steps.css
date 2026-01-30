@@ -1,0 +1,36 @@
+@layer components {
+  #steps-list {
+    h3 {
+      @apply mb-base min-h-auto;
+    }
+
+    img {
+      @apply -order-1 aspect-video corner-shape-sm;
+    }
+
+    li:first-of-type {
+      @apply bg-brand;
+      h3 {
+        @apply bg-white text-brand;
+      }
+    }
+  }
+
+  @media (width >= 48rem) {
+    #steps-list li:first-of-type {
+      @apply col-span-2;
+      @media (width < 64rem) {
+        @apply grid grid-cols-subgrid grid-rows-[min-content_1fr];
+        img {
+          @apply row-span-2;
+        }
+      }
+    }
+  }
+
+  @media (width >= 64rem) {
+    #steps-list li:first-of-type {
+      @apply col-span-1 row-span-2;
+    }
+  }
+}

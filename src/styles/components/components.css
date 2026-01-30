@@ -1,0 +1,103 @@
+@layer components {
+  .section-heading {
+    @apply mb-big text-fluid-heading max-md:text-stroke;
+  }
+
+  .btn {
+    @apply flex items-center justify-center w-fit min-w-[42px] max-w-full min-h-[42px] px-base py-small text-center leading-none bg-transparency corner-shape-xs border-2 border-transparent transition-colors duration-300 focus:outline-none;
+    @apply hover:bg-brand focus-visible:border-inherit;
+    &.btn-gold {
+      @apply bg-brand;
+      @apply hover:bg-brand/75;
+      & + .btn {
+        @apply hover:bg-semi-transparent/36;
+      }
+    }
+
+    &.btn-disabled {
+      @apply bg-brand brightness-50 cursor-default;
+    }
+
+    &.btn-big {
+      @apply lg:min-h-[68px];
+    }
+
+    &.btn-square {
+      width: auto;
+      @apply aspect-square;
+    }
+  }
+
+  .badge {
+    @apply relative px-[8px] text-base text-stroke after:absolute after:inset-x-0 after:-inset-y-[2px] after:-z-1 after:corner-shape-xxs xl:text-lg;
+    &.iaai {
+      @apply uppercase;
+      &::after {
+        @apply bg-red-600;
+      }
+    }
+    &.copart {
+      @apply capitalize;
+      &::after {
+        @apply bg-blue-600;
+      }
+    }
+    &.good::after {
+      @apply bg-green-700;
+    }
+    &.damage::after {
+      @apply bg-red-700;
+    }
+  }
+
+  .stretched-link {
+    @apply after:absolute after:inset-0 after:z-1 after:transition-colors after:duration-300;
+  }
+
+  .social-link {
+    @apply block p-[15%];
+    path {
+      @apply fill-white;
+    }
+  }
+
+  #auction-car-page-countdown {
+    @apply flex flex-wrap justify-between gap-small mb-medium p-base text-center bg-transparency corner-shape-xs;
+    p {
+      @apply flex flex-col items-center leading-none;
+      [data-countdown-label] {
+        @apply text-[.75em];
+      }
+    }
+  }
+
+  dt:has(#price-tooltip) {
+    @apply grid grid-cols-1 grid-rows-[max-content_0fr] gap-0 transition-all duration-750 mb-[.5em];
+    &:has([aria-expanded="true"]) {
+      @apply grid-rows-[max-content_1fr] gap-small;
+    }
+    div {
+      @apply text-[.875em];
+    }
+    button {
+      @apply relative inline-flex items-center justify-center w-[1lh] aspect-square align-bottom brightness-125 cursor-help;
+      svg {
+        @apply w-full;
+      }
+      &::after {
+        content: "";
+        @apply absolute w-[42px] aspect-square top-1/2 start-1/2 -translate-1/2;
+      }
+    }
+  }
+
+  [data-gallery] {
+    @apply opacity-0 transition-all duration-400;
+    /* button {
+        @apply max-w-1/4;
+      } */
+    &.swiper-initialized {
+      @apply opacity-100;
+    }
+  }
+}

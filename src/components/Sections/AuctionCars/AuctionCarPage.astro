@@ -1,0 +1,33 @@
+---
+import SectionHeading from "@components/UI/SectionHeading.astro";
+import Filters from "@components/UI/Filters/Filters.astro";
+import Pagination from "@components/UI/Pagination.astro";
+import AuctionCars from "@components/Sections/AuctionCars/List.astro";
+
+const {
+  cars,
+  totalPages,
+  currentPage,
+  searchMode = false,
+  title = "Каталог",
+} = Astro.props;
+---
+
+<main
+  id="main"
+  class="wrapper grid grid-cols-1 gap-base md:grid-cols-[16rem_auto] md:items-start md:gap-y-0"
+>
+  <SectionHeading style="col-span-full" headingLevel="h1"
+    >{title}</SectionHeading
+  >
+
+  <Filters />
+
+  <AuctionCars cars={cars} />
+
+  <Pagination
+    totalPages={totalPages}
+    currentPage={currentPage}
+    searchMode={searchMode}
+  />
+</main>

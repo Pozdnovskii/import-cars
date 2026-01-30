@@ -1,0 +1,51 @@
+---
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+import { generateMeta } from "@sanity/lib/seo";
+
+import { turso } from "@turso/turso";
+import { getCars, getPaginationData } from "@turso/lib/getCars";
+
+const [cars, { totalPages }] = await Promise.all([
+  getCars(turso),
+  getPaginationData(turso),
+]);
+
+import Layout from "@layouts/Layout.astro";
+
+import AuctionCarPage from "@components/Sections/AuctionCars/AuctionCarPage.astro";
+
+const { data: seo } = await loadQuery<SanityDocument>({
+  query: `*[_type == "seoSettings"][0]{ siteName, auctionCarsCatalogPage }`,
+});
+
+const meta =
+  seo?.siteName &&
+  seo?.auctionCarsCatalogPage?.title &&
+  seo?.auctionCarsCatalogPage?.description
+    ? generateMeta(
+        { siteName: seo.siteName },
+        {
+          titleTemplate: seo.auctionCarsCatalogPage.title,
+          descriptionTemplate: seo.auctionCarsCatalogPage.description,
+        }
+      )
+    : undefined;
+
+const nextPage = totalPages > 1 ? "/auction-cars/page-2" : null;
+---
+
+<Layout title={meta?.title} description={meta?.description} nextPage={nextPage}>
+  <AuctionCarPage cars={cars} totalPages={totalPages} currentPage={1} />
+</Layout>
+
+<script>
+  import { initFilters } from "@scripts/filters";
+  import { initCountdowns, cleanupCountdowns } from "@scripts/countdown";
+
+  document.addEventListener("astro:before-preparation", cleanupCountdowns);
+  document.addEventListener("astro:page-load", () => {
+    initFilters("static");
+    initCountdowns();
+  });
+</script>

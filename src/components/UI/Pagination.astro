@@ -1,0 +1,136 @@
+---
+const { currentPage, totalPages, searchMode = false } = Astro.props;
+
+const currentUrl = searchMode ? Astro.url : null;
+
+const middlePages = Array.from({ length: totalPages }, (_, i) => i + 1).filter(
+  (page) =>
+    page !== 1 && page !== totalPages && Math.abs(page - currentPage) <= 1
+);
+
+function getPageUrl(page: number) {
+  if (searchMode && currentUrl) {
+    const url = new URL(currentUrl);
+    if (page === 1) {
+      url.searchParams.delete("page");
+    } else {
+      url.searchParams.set("page", String(page));
+    }
+    return url.pathname + url.search;
+  }
+
+  return page === 1 ? "/auction-cars" : `/auction-cars/page-${page}`;
+}
+---
+
+<nav aria-label="Навигация по страници" class="col-span-full mt-12">
+  <ul class="flex justify-center items-center gap-2 flex-wrap">
+    {
+      currentPage > 1 && (
+        <li>
+          <a
+            href={getPageUrl(currentPage - 1)}
+            class="px-4 py-2 bg-[#2c2c2e] text-white corner-shape-xs hover:bg-[#3c3c3e] transition"
+            aria-label="Предишна страница"
+          >
+            ←
+          </a>
+        </li>
+      )
+    }
+
+    <li>
+      <a
+        href={getPageUrl(1)}
+        class:list={[
+          "px-4 py-2 corner-shape-xxs transition",
+          {
+            "bg-[#ff9f0a] text-[#1c1c1e] font-bold": currentPage === 1,
+            "bg-[#2c2c2e] text-white hover:bg-[#3c3c3e]": currentPage !== 1,
+          },
+        ]}
+        aria-label="Страница 1"
+        aria-current={currentPage === 1 ? "page" : undefined}>1</a
+      >
+    </li>
+
+    {
+      currentPage > 3 && (
+        <li>
+          <span class="px-2 text-gray-500" aria-hidden="true">
+            &hellip;
+          </span>
+        </li>
+      )
+    }
+
+    {
+      middlePages.map((page) => (
+        <li>
+          <a
+            href={getPageUrl(page)}
+            class:list={[
+              "px-4 py-2 corner-shape-xs transition",
+              {
+                "bg-[#ff9f0a] text-[#1c1c1e] font-bold": currentPage === page,
+                "bg-[#2c2c2e] text-white hover:bg-[#3c3c3e]":
+                  currentPage !== page,
+              },
+            ]}
+            aria-label={`Страница ${page}`}
+            aria-current={currentPage === page ? "page" : undefined}
+          >
+            {page}
+          </a>
+        </li>
+      ))
+    }
+
+    {
+      currentPage < totalPages - 2 && (
+        <li>
+          <span class="px-2 text-gray-500" aria-hidden="true">
+            &hellip;
+          </span>
+        </li>
+      )
+    }
+
+    {
+      totalPages > 1 && (
+        <li>
+          <a
+            href={getPageUrl(totalPages)}
+            class:list={[
+              "px-4 py-2 corner-shape-xs transition",
+              {
+                "bg-[#ff9f0a] text-[#1c1c1e] font-bold":
+                  currentPage === totalPages,
+                "bg-[#2c2c2e] text-white hover:bg-[#3c3c3e]":
+                  currentPage !== totalPages,
+              },
+            ]}
+            aria-label={`Страница ${totalPages}`}
+            aria-current={currentPage === totalPages ? "page" : undefined}
+          >
+            {totalPages}
+          </a>
+        </li>
+      )
+    }
+
+    {
+      currentPage < totalPages && (
+        <li>
+          <a
+            href={getPageUrl(currentPage + 1)}
+            class="px-4 py-2 bg-[#2c2c2e] text-white corner-shape-xs hover:bg-[#3c3c3e] transition"
+            aria-label="Следваща страница"
+          >
+            →
+          </a>
+        </li>
+      )
+    }
+  </ul>
+</nav>

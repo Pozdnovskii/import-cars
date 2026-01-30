@@ -1,0 +1,40 @@
+---
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+
+import SliderBtnsWrapper from "@components/UI/Slider/SliderBtnsWrapper.astro";
+import SliderScrollbar from "@components/UI/Slider/SliderScrollbar.astro";
+
+const { data: testimonials } = await loadQuery<SanityDocument[]>({
+  query: `*[_type == "testimonials"] | order(_createdAt desc)`,
+});
+---
+
+<div data-carousel-wrapper>
+  <ul
+    id="testimonials-carousel"
+    class="carousel"
+    data-carousel="with-scrollbar"
+  >
+    {
+      testimonials.map((testimonial) => (
+        <li>
+          <figure class="card gap-y-big">
+            <blockquote>
+              <p class="font-medium leading-normal lg:leading-snug">
+                {testimonial.text}
+              </p>
+            </blockquote>
+            <figcaption class="-order-1 flex flex-col gap-[.25em]">
+              <span>{testimonial.title}</span>
+              <span class="text-semi-transparent">{testimonial.service}</span>
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ul>
+
+  <SliderBtnsWrapper bigBtn />
+  <SliderScrollbar />
+</div>

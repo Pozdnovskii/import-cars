@@ -1,0 +1,298 @@
+@import "tailwindcss";
+@import "@styles/components/components.css";
+@import "@styles/components/faq.css";
+@import "@styles/components/filters.css";
+@import "@styles/components/slider-elements.css";
+@import "@styles/components/carousel.css";
+@import "@styles/components/form.css";
+
+@import "@styles/sections/header-and-footer.css";
+@import "@styles/sections/steps.css";
+
+:root {
+  --grid-cols: 1;
+  --cols-function: repeat(var(--grid-cols), minmax(0, 1fr));
+
+  --text-fluid-base: clamp(1rem, 0rem + 5vw, 1.5rem);
+
+  --stroke-width: 0.5px;
+}
+
+body {
+  font-family: var(--font-jura);
+  font-weight: 700;
+}
+
+@media (width >= 48rem) {
+  :root {
+    --grid-cols: 2;
+    --text-fluid-base: clamp(1.125rem, 0.66rem + 0.9vw, 1.5rem);
+  }
+}
+
+@media (width >= 64rem) {
+  :root {
+    --grid-cols: 3;
+  }
+}
+
+@theme {
+  --color-brand: oklch(0.57 0.12 81.71);
+  --color-transparency: #ffffff1a;
+  --color-semi-transparent: #ffffff80;
+
+  --text-custom-base: var(--text-fluid-base);
+
+  --text-fluid-heading: clamp(2rem, 1.3rem + 3svw, 4rem);
+  --text-fluid-small-heading: clamp(1.75rem, 1.5rem + 0.88vw, 2.5rem);
+
+  --spacing-section: clamp(60px, 40px + 5.5svw, 120px);
+  --spacing-base: clamp(16px, 10px + 1.5svw, 20px);
+  --spacing-small: calc(var(--spacing-base) / 2);
+  --spacing-medium: calc(var(--spacing-base) * 1.25);
+  --spacing-big: clamp(20px, 2.25svw + 12px, 40px);
+  --spacing-wrapper: clamp(9px, 2.4svw, 36px);
+
+  --radius-base: clamp(20px, 16px + 1svw, 30px);
+  --radius-xxsmall: calc(var(--radius-base) / 2.5);
+  --radius-xsmall: calc(var(--radius-base) / 2);
+  --radius-small: calc(var(--radius-base) / 1.5);
+  --radius-medium: calc(var(--radius-base) * 1.5);
+  --radius-large: calc(var(--radius-base) * 2);
+  --radius-xlarge: calc(var(--radius-base) * 2.5);
+  --radius-xxlarge: calc(var(--radius-base) * 3.25);
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth scroll-pt-24;
+  }
+
+  body {
+    @apply flex flex-col text-custom-base font-bold text-white leading-tight text-balance bg-black m-0;
+    scrollbar-gutter: stable both-edges;
+    &:has(:is(.header--open, dialog[open])) {
+      overflow: hidden;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-bold text-pretty wrap-break-word;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
+
+  #main {
+    @apply flex flex-col gap-y-section pb-section pt-[20px];
+  }
+
+  .wrapper {
+    @apply w-full max-w-[100rem] mx-auto px-wrapper;
+  }
+
+  .card {
+    @apply flex flex-col gap-base p-base corner-shape-base bg-transparency;
+  }
+
+  .layout-grid {
+    @apply grid grid-cols-(--cols-function) gap-base;
+  }
+
+  #hero,
+  #cta {
+    @apply py-big;
+  }
+
+  #hero-content,
+  #cta-content {
+    @apply flex flex-col gap-big p-0;
+  }
+
+  #cta-img-mob {
+    @apply -order-1 corner-shape-base aspect-[3/2] md:hidden;
+  }
+
+  #cta-img-desk {
+    @apply hidden md:block md:aspect-[9/16] md:corner-shape-base;
+  }
+
+  [data-element="available-car"] {
+    @apply transition-colors duration-300;
+    dt svg {
+      @apply stroke-2 stroke-brand;
+    }
+  }
+
+  .catalog {
+    @apply grid gap-base h-max;
+    grid-template-columns: repeat(auto-fit, minmax(min(14em, 100%), 1fr));
+    [data-countdown-labels] {
+      @apply absolute inset-x-0 bottom-0 p-[4px] text-center text-[.75em] bg-brand/66;
+      &[data-expired="true"] {
+        @apply bg-red-800;
+      }
+    }
+  }
+
+  @media (width < 64rem) {
+    #hero-carousel {
+      @apply min-h-[calc(100svw-var(--spacing-wrapper)*2-var(--spacing-base)*2)];
+    }
+  }
+
+  @media (width >= 48rem) {
+    #cta {
+      @apply grid grid-cols-3 gap-base p-0 bg-transparent items-stretch;
+    }
+
+    #cta-content {
+      @apply col-span-2 gap-y-base p-big pt-base bg-transparency corner-shape-base;
+    }
+  }
+
+  @media (width >= 64rem) {
+    #hero {
+      @apply grid grid-cols-3 gap-base p-0 bg-transparent;
+    }
+
+    #hero-content {
+      @apply col-span-2 gap-y-base p-big pt-base bg-transparency corner-shape-base;
+    }
+
+    #hero-content p {
+      @apply mb-[min(18svw,240px)];
+    }
+
+    #hero-carousel {
+      @apply -order-1 h-full;
+    }
+  }
+
+  @media (any-hover: hover) {
+    :is(#hero-carousel, [data-element="available-car"]) a:hover::after {
+      @apply bg-semi-transparent/12;
+    }
+  }
+}
+
+@layer components {
+  #hero-carousel {
+    @apply flex overflow-hidden corner-shape-base;
+    li {
+      @apply overflow-hidden  corner-shape-base;
+      &:not(:last-of-type) .section-heading {
+        @apply text-[clamp(1.125rem,0.875rem+1.25vw,2rem)];
+      }
+    }
+  }
+
+  .description-list {
+    @apply grid grid-cols-1 gap-y-small lg:gap-y-base;
+    div {
+      @apply flex flex-wrap gap-x-small items-center;
+      dt {
+        @apply text-semi-transparent;
+      }
+      dd {
+        @apply text-end ms-auto;
+      }
+    }
+  }
+
+  #tech-features {
+    @apply flex flex-col gap-y-[2.5em];
+    & :is(ul, dl) {
+      @apply relative grid grid-cols-1 gap-y-[.66em] gap-x-20 md:grid-cols-2 lg:text-[.875em];
+    }
+    h3.section-heading {
+      @apply mb-[.66em] text-[1.25em];
+    }
+    dl div {
+      @apply flex flex-wrap gap-x-small;
+    }
+    & :is(dt, li) {
+      @apply text-white/78;
+    }
+    dd {
+      @apply ms-auto;
+    }
+  }
+
+  #popular-cars-carousel [data-expired="true"] {
+    @apply text-red-500;
+  }
+
+  @media (width >= 48rem) {
+    #tech-features ul::after,
+    #tech-features dl::after {
+      content: "";
+      @apply absolute -inset-y-1.5 start-1/2 w-[3px] bg-semi-transparent/90 rounded-full;
+    }
+  }
+}
+
+@utility text-stroke {
+  -webkit-text-stroke: var(--stroke-width) currentColor;
+  paint-order: stroke fill;
+}
+
+@utility corner-shape-base {
+  @apply rounded-base;
+  @supports (corner-shape: superellipse(1.5)) {
+    corner-shape: superellipse(1.5);
+    @apply rounded-medium;
+  }
+}
+
+@utility corner-shape-sm {
+  @apply rounded-small;
+  @supports (corner-shape: superellipse(1.5)) {
+    corner-shape: superellipse(1.5);
+    @apply rounded-base;
+  }
+}
+
+@utility corner-shape-xs {
+  @apply rounded-xsmall;
+  @supports (corner-shape: superellipse(1.5)) {
+    corner-shape: superellipse(1.5);
+    @apply rounded-small;
+  }
+}
+
+@utility corner-shape-xxs {
+  @apply rounded-xxsmall;
+  @supports (corner-shape: superellipse(1.5)) {
+    corner-shape: superellipse(1.5);
+    @apply rounded-xsmall;
+  }
+}
+
+@utility corner-shape-md {
+  @apply rounded-medium;
+  @supports (corner-shape: superellipse(1.5)) {
+    corner-shape: superellipse(1.5);
+    @apply rounded-large;
+  }
+}
+
+@utility corner-shape-lg {
+  @apply rounded-large;
+  @supports (corner-shape: superellipse(1.5)) {
+    corner-shape: superellipse(1.5);
+    @apply rounded-xlarge;
+  }
+}
+
+@utility corner-shape-xl {
+  @apply rounded-xlarge;
+  @supports (corner-shape: superellipse(1.5)) {
+    corner-shape: superellipse(1.5);
+    @apply rounded-xxlarge;
+  }
+}

@@ -1,0 +1,251 @@
+---
+import { turso } from "@turso/turso";
+
+import {
+  getMaxPrice,
+  getMakes,
+  getModelsByMake,
+  getMinYear,
+  getMaxOdometer,
+} from "@turso/lib/filters.ts";
+
+import RangeFilter from "@components/UI/Filters/RangeFilter.astro";
+import SelectFilter from "@components/UI/Filters/SelectFilter.astro";
+import CheckboxIcon from "./CheckboxIcon.astro";
+
+const [maxPrice, makes, minYear, maxOdometer] = await Promise.all([
+  getMaxPrice(turso),
+  getMakes(turso),
+  getMinYear(turso),
+  getMaxOdometer(turso),
+]);
+
+const currentYear = new Date().getFullYear();
+
+const currentUrl = Astro.url;
+
+const currentPlatforms = currentUrl.searchParams
+  .get("platform")
+  ?.split(",") || ["copart", "IAAI"];
+
+const priceFrom = currentUrl.searchParams.get("priceFrom") || "0";
+const priceTo = currentUrl.searchParams.get("priceTo") || String(maxPrice);
+
+const selectedMake = currentUrl.searchParams.get("make") || undefined;
+const selectedModel = currentUrl.searchParams.get("model") || undefined;
+
+const models = selectedMake ? await getModelsByMake(selectedMake, turso) : [];
+
+const yearFrom = currentUrl.searchParams.get("yearFrom") || undefined;
+const yearTo = currentUrl.searchParams.get("yearTo") || undefined;
+
+const odometerFrom = currentUrl.searchParams.get("odometerFrom") || "0";
+const odometerTo =
+  currentUrl.searchParams.get("odometerTo") || String(maxOdometer);
+
+const yearFromOptions = Array.from(
+  { length: currentYear - minYear },
+  (_, i) => minYear + 1 + i
+).map((year) => ({
+  value: String(year),
+  label: String(year),
+}));
+
+const yearToOptions = Array.from(
+  { length: currentYear - minYear },
+  (_, i) => currentYear - 1 - i
+).map((year) => ({
+  value: String(year),
+  label: String(year),
+}));
+
+const makeOptions = makes.map((make) => ({
+  value: make,
+  label: make,
+}));
+
+const modelOptions = models.map((model) => ({
+  value: model,
+  label: model,
+}));
+
+const buyNow = currentUrl.searchParams.get("buyNow") === "true";
+---
+
+<aside class="card text-base" id="filters" transition:persist>
+  <h2 class="sr-only">Филтри</h2>
+
+  <button
+    id="filters-toggle"
+    class="flex items-center gap-x-base md:hidden"
+    aria-label="Отвори/затвори филтри"
+    aria-expanded="false"
+    aria-controls="filters-content"
+  >
+    <div aria-hidden="true" class="btn btn-square w-[42px] p-[12px]">
+      <svg
+        class="w-full"
+        viewBox="0 0 15 14"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M14.0833 0.75H0.75L6.08333 7.05667V11.4167L8.75 12.75V7.05667L14.0833 0.75Z"
+          class="stroke-brand"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </div>
+    <span aria-hidden="true">Филтри</span>
+
+    <div id="close-filters-icon" aria-hidden="true" class="btn btn-square">
+    </div>
+  </button>
+
+  <div id="filters-content" class="flex flex-col gap-base overflow-hidden">
+    <fieldset id="filter-platform" class="grid grid-cols-2 gap-small">
+      <legend class="sr-only">Платформа на аукцион</legend>
+
+      <label>
+        <input
+          type="checkbox"
+          name="platform"
+          value="copart"
+          class="sr-only"
+          checked={currentPlatforms.includes("copart")}
+        />
+        <div class="filter-field input-field">
+          <span>Copart</span>
+          <CheckboxIcon />
+        </div>
+      </label>
+
+      <label>
+        <input
+          type="checkbox"
+          name="platform"
+          value="IAAI"
+          class="sr-only"
+          checked={currentPlatforms.includes("IAAI")}
+        />
+        <div class="filter-field input-field">
+          <span>IAAI</span>
+          <CheckboxIcon />
+        </div>
+      </label>
+    </fieldset>
+
+    <RangeFilter
+      label="Цени"
+      unit="USD"
+      valueFrom={priceFrom}
+      valueTo={priceTo}
+      maxValue={maxPrice}
+      type="price"
+    />
+
+    <fieldset class="flex flex-col gap-small [&_span]:block [&_span]:mb-2">
+      <label>
+        <span>Марка</span>
+        <SelectFilter
+          options={makeOptions}
+          selectedValue={selectedMake}
+          defaultValue=""
+          dataSelect="make"
+          placeholder="Всички марки"
+        />
+      </label>
+      <label>
+        <span>Модел</span>
+        <SelectFilter
+          options={modelOptions}
+          selectedValue={selectedModel}
+          dataSelect="model"
+          placeholder="Всички модели"
+          disabled={!selectedMake}
+        />
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend class="mb-2">Диапазон години</legend>
+      <div class="flex items-center gap-[4px] [&>label]:grow">
+        <SelectFilter
+          label="От година"
+          options={yearFromOptions}
+          selectedValue={yearFrom}
+          dataSelect="year-from"
+          placeholder={String(minYear)}
+        />
+        <span class="text-semi-transparent/66">&mdash;</span>
+        <SelectFilter
+          label="До година"
+          options={yearToOptions}
+          selectedValue={yearTo}
+          dataSelect="year-to"
+          placeholder={String(currentYear)}
+        />
+      </div>
+    </fieldset>
+
+    <RangeFilter
+      label="Одометър"
+      unit="км"
+      valueFrom={odometerFrom}
+      valueTo={odometerTo}
+      maxValue={maxOdometer}
+      type="odometer"
+      style="mb-small"
+    />
+
+    <label class="md:order-last">
+      <input
+        type="checkbox"
+        data-buy-now
+        checked={buyNow}
+        class="sr-only"
+        name="buyNow"
+      />
+      <div class="flex items-center">
+        <CheckboxIcon />
+        <span>Само купи сега </span>
+      </div>
+    </label>
+
+    <button class="btn w-full px-small" data-clear-filters>
+      Изчисти филтрите
+      <svg
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+        ></path>
+      </svg>
+    </button>
+
+    <button id="apply-filters" class="btn btn-gold w-full md:hidden">
+      Приложи филтри
+    </button>
+  </div>
+</aside>
+
+<script>
+  import { initRangeSlider } from "@scripts/rangeSlider";
+  import { initMobileFilters } from "@scripts/mobile-filters";
+
+  document.addEventListener("astro:page-load", () => {
+    initRangeSlider("price");
+    initRangeSlider("odometer");
+    initMobileFilters();
+  });
+</script>

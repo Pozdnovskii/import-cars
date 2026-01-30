@@ -1,0 +1,381 @@
+---
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+import { generateAuctionCarMeta } from "@sanity/lib/seo";
+
+import { turso } from "@turso/turso";
+
+import Layout from "@layouts/Layout.astro";
+import AuctionCars from "@components/Sections/AuctionCars/Slider.astro";
+import ImgsSwiper from "@components/UI/Slider/ImgsSwiper.astro";
+import FAQ from "@components/UI/FAQ.astro";
+import SectionHeading from "@components/UI/SectionHeading.astro";
+import Button from "@components/UI/Button.astro";
+
+import FormModalWrapper from "@components/UI/Forms/FormModalWrapper.astro";
+
+export async function getStaticPaths() {
+  const result = await turso.execute("SELECT * FROM cars");
+
+  return result.rows.map((car) => ({
+    params: { slug: car.slug as string },
+    props: { car },
+  }));
+}
+
+const { car } = Astro.props;
+const images = JSON.parse(car.imageUrls as string);
+
+const { data: seo } = await loadQuery<SanityDocument>({
+  query: `*[_type == "seoSettings"][0]{
+    siteName,
+    auctionCarPageTemplate
+  }`,
+});
+
+let meta: { title: string; description: string } | undefined;
+let noindex = false;
+
+if (car.status === "sold") {
+  const carName = `${car.make} ${car.model} ${car.manufactureYear}`;
+
+  const soldDate = car.soldAt
+    ? new Date((car.soldAt as number) * 1000).toLocaleDateString("bg-BG", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    : "";
+
+  const titleVin = car.vin ? ` | VIN ${car.vin}` : ` | Лот ${car.lotNumber}`;
+  meta = {
+    title: `${carName} Продаден${titleVin}`,
+    description: `Лот ${car.lotNumber} от ${car.auctionPlatform} продаден за $${car.finalBidUsd?.toLocaleString() || "N/A"}${soldDate ? ` на ${soldDate}` : ""}. ${car.odometerKm ? `Пробег ${car.odometerKm.toLocaleString()} км. ` : ""}${car.vin ? `Проверка по VIN ${car.vin}: ` : ""}Снимки и щети за ${carName}. Търсите подобен? Внос от САЩ с ${seo?.siteName || "XclusiveCars"}`,
+  };
+} else if (car.status === "expired") {
+  noindex = true;
+
+  if (seo?.siteName && seo?.auctionCarPageTemplate) {
+    meta = generateAuctionCarMeta(
+      car,
+      seo.auctionCarPageTemplate,
+      seo.siteName
+    );
+  }
+} else {
+  if (seo?.siteName && seo?.auctionCarPageTemplate) {
+    meta = generateAuctionCarMeta(
+      car,
+      seo.auctionCarPageTemplate,
+      seo.siteName
+    );
+  }
+}
+---
+
+<Layout
+  title={meta?.title}
+  description={meta?.description}
+  image={images[0].replace("_ful", "_hrs")}
+  noindex={noindex}
+>
+  <main id="main" class="wrapper pt-0">
+    <article class="layout-grid *:col-span-2">
+      <section class="card flex flex-col gap-y-0 lg:col-span-1 lg:col-start-3">
+        <SectionHeading
+          headingLevel="h1"
+          style="text-fluid-small-heading mb-base"
+          >{car.heading}{
+            car.vin && (
+              <span class="text-custom-base block">VIN: {car.vin}</span>
+            )
+          }</SectionHeading
+        >
+
+        <section
+          id="auction-car-page-countdown"
+          data-countdown-end={car.saleDate}
+          data-countdown-labels
+          aria-label="Countdown to auction end"
+        >
+          <p>
+            <span data-countdown="days">00</span>
+            <span data-countdown-label="days">дни</span>
+          </p>
+
+          <p>
+            <span data-countdown="hours">00</span>
+            <span data-countdown-label="hours">часа</span>
+          </p>
+
+          <p>
+            <span data-countdown="minutes">00</span>
+            <span data-countdown-label="minutes">минути</span>
+          </p>
+
+          <p>
+            <span data-countdown="seconds">00</span>
+            <span data-countdown-label="seconds">секунди</span>
+          </p>
+        </section>
+
+        <dl
+          class="description-list text-[.875em] mb-medium md:max-lg:grid md:max-lg:grid-cols-2 md:max-lg:gap-x-big"
+        >
+          {
+            car.auctionPlatform && (
+              <div>
+                <dt>Източник</dt>
+                <dd
+                  class:list={[
+                    "badge",
+                    {
+                      copart: car.auctionPlatform === "copart",
+                      iaai: car.auctionPlatform === "IAAI",
+                    },
+                  ]}
+                >
+                  {car.auctionPlatform}
+                </dd>
+              </div>
+            )
+          }
+          {
+            car.lotNumber && (
+              <div>
+                <dt>Номер на аукцион</dt>
+                <dd>{car.lotNumber}</dd>
+              </div>
+            )
+          }
+          {
+            car.saleDate && (
+              <div>
+                <dt>Дата на търга</dt>
+                <dd>
+                  {(() => {
+                    const date = new Date((car.saleDate as number) * 1000);
+                    const now = new Date();
+
+                    if (date < now) {
+                      return "Приключен";
+                    }
+
+                    return date
+                      .toLocaleDateString("bg-BG", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                      .replace(" г.", "");
+                  })()}
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+
+        {
+          car.estimatedPriceToBulgariaBgn && (
+            <dl class="mb-base mt-auto p-base bg-transparency corner-shape-xs">
+              <dt class="" aria-describedby="price-tooltip">
+                <div>
+                  {/* Очаквана Цена до България */}
+                  <span>Очаквана Цена до България</span>
+                  {/* class="absolute -top-[.33lh] inline-flex items-center justify-center w-[42px] aspect-square brightness-125 -translate-x-1/6 cursor-help" */}
+                  <button
+                    aria-label="Информация за очакваната цена"
+                    data-tooltip-trigger="price-tooltip"
+                    aria-expanded="false"
+                    aria-controls="price-tooltip"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        class="fill-brand"
+                        d="M12.942 18H11.5q-3.132 0-5.316-2.183T4 10.504t2.183-5.317T11.498 3q1.566 0 2.93.586q1.364.585 2.383 1.604t1.604 2.379T19 10.5q0 2.87-1.474 5.264t-3.753 3.98q-.134.077-.27.085q-.134.007-.257-.06t-.196-.171t-.079-.263zm1.058.35q1.775-1.5 2.888-3.512T18 10.5q0-2.725-1.888-4.612T11.5 4T6.888 5.888T5 10.5t1.888 4.613T11.5 17H14zm-2.464-2.779q.306 0 .52-.216t.213-.523t-.216-.52t-.523-.214t-.52.217t-.214.523t.216.52t.524.213M9.459 8.202q.174.067.347-.009t.283-.245q.205-.338.582-.54q.377-.2.868-.2q.736 0 1.197.385t.46 1.042q0 .406-.197.76q-.197.353-.672.828q-.644.627-.925 1.076t-.28.872q0 .197.128.336t.31.14t.305-.14q.123-.138.146-.341q.049-.31.335-.689t.696-.788q.564-.564.807-1.063q.243-.5.243-.999q0-1.029-.71-1.655t-1.805-.626q-.736 0-1.356.359t-.932.856q-.11.203-.065.388t.235.253m2.041 2.973"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <span
+                  id="price-tooltip"
+                  role="tooltip"
+                  class="text-[.875em] text-semi-transparent overflow-hidden z-3"
+                >
+                  Това е прогнозна калкулация на цената за активни превозни
+                  средства. Цените, особено за по-силно повредени автомобили,
+                  може да не са напълно точни. За по-точна оценка, моля,
+                  свържете се с нас
+                </span>
+              </dt>
+              <dd class="text-end">
+                {"~\u202F" +
+                  Number(car.estimatedPriceToBulgariaBgn)
+                    .toLocaleString("bg-BG")
+                    .replace(/\s/g, "\u202F") +
+                  "\u202Fлев"}
+              </dd>
+            </dl>
+          )
+        }
+
+        <div class="grid grid-cols-2 gap-small mb-small *:w-full *:py-base">
+          <Button
+            href="viber://chat?number=%2B359878866739"
+            target="_blank"
+            rel="noopener">Пиши ни</Button
+          >
+          <Button href="tel:+359876888994">Обади се</Button>
+          <Button
+            aria={{
+              haspopup: "dialog",
+              controls: "inquiry-dialog",
+            }}
+            onclick="document.getElementById('inquiry-dialog').showModal()"
+            style="col-span-2"
+            accentBtn>Резервирай</Button
+          >
+        </div>
+        <p class="text-brand text-[.875em] lg:text-[.75em] leading-none">
+          Прогнозата ни е вярна в 99% от случаите
+        </p>
+      </section>
+
+      <section class="card order-2 lg:col-span-1 lg:col-start-3">
+        <SectionHeading headingLevel="h2" style="text-fluid-small-heading mb-0"
+          >Детайли за автомобила</SectionHeading
+        >
+        <dl
+          class="flex flex-col gap-y-base *:flex *:justify-between *:gap-y-small *:gap-x-base [&_dt]:text-semi-transparent [&_dd]:text-end gap-base md:max-lg:grid md:max-lg:grid-cols-2"
+        >
+          {
+            car.manufactureYear && (
+              <div>
+                <dt>Год</dt>
+                <dd>{car.manufactureYear}</dd>
+              </div>
+            )
+          }
+          {
+            car.odometerKm && (
+              <div>
+                <dt>Пробег</dt>
+                <dd>
+                  {(car.odometerKm as any)
+                    .toLocaleString("bg-BG" as string)
+                    .replace(/\s/g, "\u202F") + "\u202Fкм"}
+                </dd>
+              </div>
+            )
+          }
+          {
+            car.engine && (
+              <div>
+                <dt>Двигател</dt>
+                <dd>{car.engine}</dd>
+              </div>
+            )
+          }
+          {
+            car.driveType && (
+              <div>
+                <dt>Задвижване</dt>
+                <dd>{car.driveType}</dd>
+              </div>
+            )
+          }
+          {
+            car.transmissionBulgarian && (
+              <div>
+                <dt>Скорости</dt>
+                <dd>{car.transmissionBulgarian}</dd>
+              </div>
+            )
+          }
+          {
+            car.fuelBulgarian && (
+              <div>
+                <dt>Гориво</dt>
+                <dd>{car.fuelBulgarian}</dd>
+              </div>
+            )
+          }
+          {
+            car.movableConditionBulgarian && (
+              <div>
+                <dt>Състояние</dt>
+                <dd class="badge good">Добре</dd>
+              </div>
+            )
+          }
+          {
+            car.primaryDamageBulgarian && (
+              <div>
+                <dt>Основни щети</dt>
+                <dd class="">{car.primaryDamageBulgarian}</dd>
+              </div>
+            )
+          }
+          {
+            car.secondaryDamageBulgarian && (
+              <div>
+                <dt>Допълнителна щета</dt>
+                <dd class="">{car.secondaryDamageBulgarian}</dd>
+              </div>
+            )
+          }
+          {
+            car.hasKeyBulgarian && (
+              <div>
+                <dt>Ключове</dt>
+                <dd>{car.hasKeyBulgarian}</dd>
+              </div>
+            )
+          }
+        </dl>
+        <Button href="#" style="mt-auto w-full py-base"
+          >Провери сега Carfax</Button
+        >
+      </section>
+
+      <ImgsSwiper
+        images={images}
+        style="card gap-y-small lg:-order-1 lg:row-span-full lg:h-fit lg:sticky lg:top-[96px]"
+      />
+    </article>
+
+    <section id="faq">
+      <SectionHeading headingLevel="h2">FAQ</SectionHeading>
+      <FAQ />
+    </section>
+
+    <section>
+      <SectionHeading headingLevel="h2">Подобни автомобили</SectionHeading>
+      <AuctionCars
+        excludeSlug={car.slug}
+        headingLevel="h3"
+        carousel={true}
+        id="popular-cars-carousel"
+      />
+    </section>
+
+    <FormModalWrapper name="auctionCarLot" carId={Number(car.lotNumber)} />
+  </main>
+</Layout>
+
+<script>
+  import { initTooltips } from "@scripts/tooltip";
+  import { initCountdowns, cleanupCountdowns } from "@scripts/countdown";
+  import { initCarousels } from "@scripts/carousel";
+
+  document.addEventListener("astro:before-preparation", cleanupCountdowns);
+  document.addEventListener("astro:page-load", () => {
+    initTooltips();
+    initCountdowns();
+    initCarousels();
+  });
+</script>

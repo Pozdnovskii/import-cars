@@ -1,0 +1,8 @@
+---
+const { headingLevel, style } = Astro.props;
+const Tag = headingLevel || "h2";
+---
+
+<Tag class:list={["section-heading", style]}>
+  <slot />
+</Tag>

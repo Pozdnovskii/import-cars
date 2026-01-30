@@ -1,0 +1,70 @@
+---
+const {
+  label,
+  unit,
+  valueFrom,
+  valueTo,
+  maxValue,
+  type,
+  step = 1000,
+  style,
+} = Astro.props;
+---
+
+<fieldset class:list={[style]}>
+  <legend class="mb-2">{label} ({unit})</legend>
+
+  <div class="grid grid-cols-2 gap-small mb-3">
+    <label>
+      <span class="sr-only">От</span>
+      <input
+        type="number"
+        id={`${type}From`}
+        value={valueFrom}
+        min="0"
+        max={maxValue}
+        step={step}
+        class="filter-field"
+        data-is-default={valueFrom === "0" ? "true" : "false"}
+        data-input={`${type}-from`}
+      />
+    </label>
+
+    <label>
+      <span class="sr-only">До</span>
+      <input
+        type="number"
+        id={`${type}To`}
+        value={valueTo}
+        min="0"
+        max={maxValue}
+        step={step}
+        class="filter-field"
+        data-is-default={valueTo === String(maxValue) ? "true" : "false"}
+        data-input={`${type}-to`}
+      />
+    </label>
+  </div>
+
+  <div
+    data-slider={type}
+    data-max={maxValue}
+    style={`--range-left: ${(parseInt(valueFrom) / maxValue) * 100}%; --range-right: ${100 - (parseInt(valueTo) / maxValue) * 100}%;`}
+  >
+    <span
+      data-thumb={`${type}-from`}
+      role="slider"
+      aria-valuemin="0"
+      aria-valuemax={maxValue}
+      aria-valuenow={valueFrom}
+      tabindex="0"></span>
+
+    <span
+      data-thumb={`${type}-to`}
+      role="slider"
+      aria-valuemin="0"
+      aria-valuemax={maxValue}
+      aria-valuenow={valueTo}
+      tabindex="0"></span>
+  </div>
+</fieldset>

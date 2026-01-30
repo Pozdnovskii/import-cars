@@ -1,0 +1,75 @@
+---
+import { Font } from "astro:assets";
+import { ClientRouter } from "astro:transitions";
+
+import "@styles/global.css";
+
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+
+import Header from "@components/Sections/Header.astro";
+import Footer from "@components/Sections/Footer.astro";
+
+const { data: contacts } = await loadQuery<SanityDocument>({
+  query: `*[_type == "contacts"][0]{
+    phone,
+    email,
+    facebook,
+    instagram,
+    viber,
+    mobileBG
+  }`,
+});
+
+const {
+  title = "Купете кола от САЩ с xclusiveCars | Внос под ключ от Америка до България",
+  description = "xclusiveCars - професионален внос на автомобили от Америка и Канада. Избор, закупуване, транспорт и митническо оформяне. Спестете до 40% от цената. Доставка до вашия дом в България.",
+  image = "/opengraph.png",
+  noindex,
+  nextPage,
+  prevPage,
+} = Astro.props;
+
+// const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// const prevURL = prevPage ? new URL(prevPage, Astro.site).href : null;
+// const nextURL = nextPage ? new URL(nextPage, Astro.site).href : null;
+---
+
+<!doctype html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- <link rel="canonical" href={canonicalURL} /> -->
+    <!-- {prevURL && <link rel="prev" href={prevURL} />}
+    {nextURL && <link rel="next" href={nextURL} />} -->
+
+    <meta property="og:type" content="website" />
+    <!-- <meta property="og:url" content={canonicalURL} /> -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`Xclusivecars | ${title}`} />
+    <meta name="twitter:description" content={description} />
+    <!-- <meta name="twitter:image" content="/opengraph.jpg" /> -->
+
+    <link rel="icon" type="image/webp" href="/favicon.webp" />
+    <Font cssVariable="--font-jura" preload />
+    <meta name="robots" content="noindex, nofollow" />
+    <!-- {noindex && <meta name="robots" content="noindex, follow" />} -->
+
+    <!-- <meta name="view-transition" content="same-origin" /> -->
+    <ClientRouter />
+  </head>
+  <body>
+    <Header contacts={contacts} />
+    <slot />
+    <Footer contacts={contacts} />
+  </body>
+</html>

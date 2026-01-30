@@ -1,0 +1,42 @@
+---
+interface Props {
+  label?: string;
+  options: Array<{ value: string; label: string }>;
+  selectedValue?: string;
+  dataSelect: string;
+  placeholder?: string;
+  defaultValue?: string;
+  disabled?: boolean;
+}
+
+const {
+  label,
+  options,
+  selectedValue,
+  dataSelect,
+  placeholder,
+  defaultValue = "",
+  disabled = false,
+} = Astro.props;
+
+const isDefault = !selectedValue || selectedValue === defaultValue;
+---
+
+<label>
+  {label && <span class="sr-only">{label}</span>}
+  <select
+    class="filter-field select-field"
+    data-select={dataSelect}
+    data-is-default={isDefault ? "true" : "false"}
+    disabled={disabled}
+  >
+    <option value="">{placeholder}</option>
+    {
+      options.map((option) => (
+        <option value={option.value} selected={option.value === selectedValue}>
+          {option.label}
+        </option>
+      ))
+    }
+  </select>
+</label>

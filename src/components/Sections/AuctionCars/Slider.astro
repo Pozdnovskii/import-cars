@@ -1,0 +1,53 @@
+---
+import { turso } from "@turso/turso";
+import { getCars } from "@turso/lib/getCars";
+
+import AuctionCarCard from "@components/Sections/AuctionCars/Card.astro";
+import SliderBtnsWrapper from "@components/UI/Slider/SliderBtnsWrapper.astro";
+import SliderScrollbar from "@components/UI/Slider/SliderScrollbar.astro";
+import LastSlide from "@components/UI/LastSlide.astro";
+
+const {
+  carousel = false,
+  headingLevel,
+  id,
+  style,
+  excludeSlug,
+  limit,
+  minimumInfo = false,
+} = Astro.props;
+
+const cars = await getCars(turso, {
+  excludeSlug,
+  limit,
+  excludeExpired: true,
+});
+---
+
+<div data-carousel-wrapper={carousel || undefined}>
+  <ul
+    id={id}
+    class:list={[carousel && "carousel", style]}
+    data-carousel={carousel ? "with-scrollbar" : undefined}
+  >
+    {
+      cars.map((car) => (
+        <li>
+          <AuctionCarCard car={car} headingLevel={headingLevel} minimumInfo />
+        </li>
+      ))
+    }
+    <li>
+      <LastSlide href="/auction-cars" />
+    </li>
+  </ul>
+
+  {
+    carousel && (
+      <>
+        <SliderBtnsWrapper bigBtn />
+        <SliderScrollbar />
+      </>
+    )
+  }
+</div>

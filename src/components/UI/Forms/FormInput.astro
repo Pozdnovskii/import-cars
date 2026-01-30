@@ -1,0 +1,42 @@
+---
+interface Props {
+  label: string;
+  name: string;
+  type?: "text" | "email" | "tel";
+  placeholder: string;
+  multiline?: boolean;
+  required?: boolean;
+  otherAttrs?: Record<string, any>;
+}
+
+const {
+  label,
+  placeholder,
+  name,
+  type = "text",
+  multiline = false,
+  required = false,
+  otherAttrs = {},
+} = Astro.props;
+
+const Tag = multiline ? "textarea" : "input";
+
+const inputAttrs = multiline
+  ? {}
+  : {
+      type,
+      autocomplete: name,
+    };
+---
+
+<label>
+  <span>{label}</span>
+  <Tag
+    name={name}
+    {...inputAttrs}
+    placeholder={placeholder}
+    required={required}
+    {...otherAttrs}
+  />
+  <span id={`${name}-error-message`}></span>
+</label>

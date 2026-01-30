@@ -1,0 +1,297 @@
+---
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+import { generateAvailableCarMeta } from "@sanity/lib/seo";
+
+import { urlForImage } from "@sanity/lib/url-for-image";
+
+import Layout from "@layouts/Layout.astro";
+
+import AvailableCars from "@components/Sections/AvailableCars/List.astro";
+
+import SectionHeading from "@components/UI/SectionHeading.astro";
+import Button from "@components/UI/Button.astro";
+import ImgsSwiper from "@components/UI/Slider/ImgsSwiper.astro";
+import FormModalWrapper from "@components/UI/Forms/FormModalWrapper.astro";
+
+export async function getStaticPaths() {
+  const { data: availableCars } = await loadQuery<SanityDocument[]>({
+    query: `*[_type == "availableCars"]{ "slug": slug.current }`,
+  });
+
+  return availableCars.map((car) => ({
+    params: { slug: car.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const { data: car } = await loadQuery<SanityDocument>({
+  query: `*[_type == "availableCars" && slug.current == $slug][0]`,
+  params: { slug },
+});
+
+const { data: seo } = await loadQuery<SanityDocument>({
+  query: `*[_type == "seoSettings"][0]{
+    siteName,
+    availableCarPageTemplate
+  }`,
+});
+
+const meta =
+  seo?.siteName && seo?.availableCarPageTemplate
+    ? generateAvailableCarMeta(car, seo.availableCarPageTemplate, seo.siteName)
+    : undefined;
+---
+
+<Layout
+  title={meta?.title}
+  description={meta?.description}
+  image={urlForImage(car.gallery[0].asset).url()}
+>
+  <main id="main" class="wrapper pt-0">
+    <article class="layout-grid lg:grid-rows-[max-content_1fr] *:col-span-2">
+      <header
+        class="grid lg:grid-rows-subgrid lg:row-span-full lg:col-span-1 lg:col-start-3"
+      >
+        <div class="card gap-medium lg:sticky lg:top-[96px]">
+          <SectionHeading
+            headingLevel="h1"
+            style="text-fluid-small-heading mb-0">{car.title}</SectionHeading
+          >
+
+          <dl
+            class="description-list md:max-lg:grid-cols-2 md:max-lg:gap-x-big"
+          >
+            {
+              car.price && (
+                <div>
+                  <dt>Цена</dt>
+                  <dd>
+                    {car.price.toLocaleString("bg-BG").replace(/\s/g, "\u202F")}{" "}
+                    BGN
+                  </dd>
+                </div>
+              )
+            }
+
+            {
+              car.year && (
+                <div>
+                  <dt>Год</dt>
+                  <dd>{car.year}</dd>
+                </div>
+              )
+            }
+            {
+              car.odometer && (
+                <div>
+                  <dt>Пробег</dt>
+                  <dd>
+                    {car.odometer
+                      .toLocaleString("bg-BG")
+                      .replace(/\s/g, "\u202F") + "\u202Fкм"}
+                  </dd>
+                </div>
+              )
+            }
+            {
+              car.transmission && (
+                <div>
+                  <dt>Скорости</dt>
+                  <dd>{car.transmission}</dd>
+                </div>
+              )
+            }
+            {
+              car.fuelType && (
+                <div>
+                  <dt>Гориво</dt>
+                  <dd>{car.fuelType}</dd>
+                </div>
+              )
+            }
+            {
+              car.horsepower && (
+                <div>
+                  <dt>Мощност</dt>
+                  <dd>{`${car.horsepower}\u202Fк.с.`}</dd>
+                </div>
+              )
+            }
+
+            {
+              car.driveType && (
+                <div>
+                  <dt>Задвижване</dt>
+                  <dd>{car.driveType}</dd>
+                </div>
+              )
+            }
+          </dl>
+
+          <div class="grid grid-cols-2 gap-base mt-auto *:w-full *:py-base">
+            <!-- <Button
+              href="viber://chat?number=%2B359878866739"
+              target="_blank"
+              rel="noopener">Viber</Button
+            >
+            <Button href="tel:+359876888994">Call Us</Button> -->
+            <Button
+              aria={{
+                haspopup: "dialog",
+                controls: "inquiry-dialog",
+              }}
+              onclick="document.getElementById('inquiry-dialog').showModal()"
+              style="col-span-2"
+              accentBtn>Резервирай</Button
+            >
+          </div>
+        </div>
+      </header>
+
+      <section class="card gap-y-0 max-lg:order-4">
+        <SectionHeading
+          headingLevel="h2"
+          style="text-fluid-small-heading mb-[.66em]"
+          >Технически характеристики</SectionHeading
+        >
+        <div id="tech-features" class="">
+          <section>
+            <SectionHeading headingLevel="h3" style="sr-only"
+              >Key features</SectionHeading
+            >
+            <dl>
+              {
+                car.VIN && (
+                  <div>
+                    <dt>VIN</dt>
+                    <dd>{car.VIN}</dd>
+                  </div>
+                )
+              }
+              {
+                car.type && (
+                  <div>
+                    <dt>Тип</dt>
+                    <dd>{car.type}</dd>
+                  </div>
+                )
+              }
+
+              {
+                car.doors && (
+                  <div>
+                    <dt>Врати</dt>
+                    <dd>{car.doors}</dd>
+                  </div>
+                )
+              }
+              {
+                car.seets && (
+                  <div>
+                    <dt>Седалки</dt>
+                    <dd>{car.seets}</dd>
+                  </div>
+                )
+              }
+
+              {
+                car.color && (
+                  <div>
+                    <dt>Цвят</dt>
+                    <dd>{car.color}</dd>
+                  </div>
+                )
+              }
+            </dl>
+          </section>
+
+          {
+            car.safety && (
+              <section>
+                <SectionHeading headingLevel="h3">Безопасност</SectionHeading>
+                <ul>
+                  {car.safety.map((item: string) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+
+          {
+            car.exterior && (
+              <section>
+                <SectionHeading headingLevel="h3">Екстериор</SectionHeading>
+                <ul>
+                  {car.exterior.map((item: string) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+
+          {
+            car.interior && (
+              <section>
+                <SectionHeading headingLevel="h3">Интериор</SectionHeading>
+                <ul>
+                  {car.interior.map((item: string) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+
+          {
+            car.comfort && (
+              <section>
+                <SectionHeading headingLevel="h3">Комфорт</SectionHeading>
+                <ul>
+                  {car.comfort.map((item: string) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+
+          {
+            car.other && (
+              <section>
+                <SectionHeading headingLevel="h3">Други</SectionHeading>
+                <ul>
+                  {car.other.map((item: string) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
+        </div>
+      </section>
+
+      <ImgsSwiper images={car.gallery} style="card lg:-order-1 " sanity />
+    </article>
+
+    <section>
+      <SectionHeading headingLevel="h2">Подобни автомобили</SectionHeading>
+      <AvailableCars
+        excludeSlug={slug}
+        headingLevel="h3"
+        carousel={true}
+        id="available-cars-carousel"
+      />
+    </section>
+
+    <FormModalWrapper name="availableCarId" carId={Number(car.carId)} />
+  </main>
+</Layout>
+
+<script>
+  import { initCarousels } from "@scripts/carousel";
+  document.addEventListener("astro:page-load", initCarousels);
+</script>

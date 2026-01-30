@@ -1,0 +1,59 @@
+---
+import Button from "@components/UI/Button.astro";
+
+import Instagram from "@assets/svg/SocialLinks/Instagram.astro";
+import Facebook from "@assets/svg/SocialLinks/Facebook.astro";
+import Mail from "@assets/svg/SocialLinks/Mail.astro";
+import Viber from "@assets/svg/SocialLinks/Viber.astro";
+import Phone from "@assets/svg/SocialLinks/Phone.astro";
+
+const { contacts, desktopLimit = 2 } = Astro.props;
+
+const socialLinks = [
+  { href: contacts?.viber, label: "Viber group", icon: Viber },
+  { href: contacts?.instagram, label: "Instagram link", icon: Instagram },
+  { href: contacts?.facebook, label: "Facebook link", icon: Facebook },
+  {
+    href: contacts?.email ? `mailto:${contacts.email}` : null,
+    label: "Email",
+    icon: Mail,
+    isMail: true,
+  },
+  {
+    href: contacts?.phone?.forLink ? `tel:${contacts.phone.forLink}` : null,
+    label: "Phone",
+    icon: Phone,
+    isPhone: true,
+  },
+].filter((link) => link.href);
+---
+
+<address>
+  <ul>
+    {
+      socialLinks.map((link, index) => {
+        const Icon = link.icon;
+        const isVisible = index < desktopLimit;
+
+        return (
+          <li
+            style={`--index: ${index + 1}`}
+            class:list={[{ "lg:hidden": !isVisible }]}
+          >
+            <Button
+              href={link.href}
+              target={link.isPhone || link.isMail ? undefined : "_blank"}
+              rel={link.isPhone || link.isMail ? undefined : "noopener"}
+              aria={{
+                label: link.label,
+              }}
+              socialLink
+            >
+              <Icon />
+            </Button>
+          </li>
+        );
+      })
+    }
+  </ul>
+</address>

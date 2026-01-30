@@ -1,0 +1,118 @@
+---
+import SanityImg from "@components/Sanity/SanityImg.astro";
+
+import SliderBtnsWrapper from "@components/UI/Slider/SliderBtnsWrapper.astro";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
+
+const {
+  images = [],
+  style,
+  id = "photo-gallery",
+  sanity = false,
+} = Astro.props;
+---
+
+<div class={style} id={id}>
+  <div
+    class="swiper overflow-hidden corner-shape-base w-full grow"
+    data-gallery="main"
+  >
+    {
+      sanity ? (
+        <div class="swiper-wrapper aspect-[5/3]">
+          {images.map((img: any, index: number) => (
+            <div class="swiper-slide">
+              <SanityImg
+                image={img}
+                alt={img.alt || `Car image ${index + 1}`}
+                loading={index === 0 ? "eager" : "lazy"}
+                priority={index === 0}
+                sizes={{
+                  small: 350,
+                  mobile: 430,
+                  large: 600,
+                  xLarge: 666,
+                  tablet: 866,
+                  desktopSmall: 745,
+                  desktop: 960,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="swiper-wrapper aspect-[4/3] lg:aspect-[5/3]">
+          {images.map((url: any, index: number) => (
+            <div class="swiper-slide">
+              <img
+                src={url.replace("_ful", "_hrs")}
+                alt={`Car image ${index + 1}`}
+                loading={index === 0 ? "eager" : "lazy"}
+                class="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    <SliderBtnsWrapper bigBtn style="imgs-carousel_btn-wrapper" />
+  </div>
+
+  <nav
+    class="swiper swiper-thumbs w-full"
+    aria-label="Gallery thumbnails"
+    role="tablist"
+    data-gallery="thumbs"
+  >
+    <div
+      class="swiper-wrapper [&_button.swiper-slide-thumb-active]:opacity-100 [&_button]:hover:opacity-80"
+    >
+      {
+        images.map((url: any, index: number) => (
+          <button
+            class="swiper-slide aspect-[4/3] max-w-1/4 overflow-hidden corner-shape-xs opacity-50 lg:aspect-[5/3]"
+            role="tab"
+            aria-label={`View slide ${index + 1}`}
+            aria-selected={index === 0 ? "true" : "false"}
+            tabindex={index === 0 ? "0" : "-1"}
+          >
+            {sanity ? (
+              <SanityImg
+                image={url}
+                alt=""
+                loading={index < 4 ? "eager" : "lazy"}
+                sizes={{
+                  small: 100,
+                  mobile: 120,
+                  large: 150,
+                  xLarge: 150,
+                  tablet: 150,
+                  desktopSmall: 180,
+                  desktop: 200,
+                }}
+              />
+            ) : (
+              <img
+                src={url}
+                alt=""
+                class="w-full h-full object-cover"
+                loading={index < 4 ? "eager" : "lazy"}
+              />
+            )}
+          </button>
+        ))
+      }
+    </div>
+  </nav>
+</div>
+
+<script>
+  import { initCarGallery, destroyCarGallery } from "@scripts/swiper";
+
+  document.addEventListener("astro:before-preparation", destroyCarGallery);
+  document.addEventListener("astro:page-load", initCarGallery);
+</script>

@@ -1,0 +1,121 @@
+---
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+
+import SanityImg from "@components/Sanity/SanityImg.astro";
+import SectionHeading from "@components/UI/SectionHeading.astro";
+import Button from "@components/UI/Button.astro";
+import LastSlide from "@components/UI/LastSlide.astro";
+
+const { h1, descr, button1, button2 } = Astro.props;
+
+const { data: cars } = await loadQuery<SanityDocument[]>({
+  query: `*[_type == "availableCars" && showOnHero == true && sold != true] | order(_createdAt desc)[0...3]`,
+});
+---
+
+<section id="hero" class="card">
+  <div id="hero-content">
+    <SectionHeading style="mb-0 text-pretty leading-none" headingLevel="h1"
+      >{h1}</SectionHeading
+    >
+    <p class="w-[36ch] max-w-full">
+      {descr}
+    </p>
+
+    <div
+      class="flex flex-col gap-y-3 mt-auto *:w-full *:corner-shape-sm *:py-[1em]"
+    >
+      <Button accentBtn>{button1}</Button>
+      <Button href="/available-cars">{button2}</Button>
+    </div>
+  </div>
+
+  <section id="hero-carousel" class="relative" aria-roledescription="carousel">
+    <h2 class="sr-only">Препоръчани автомобили</h2>
+
+    <ul class="carousel w-full">
+      {
+        cars.map((car, index) => (
+          <li
+            aria-roledescription="slide"
+            id={`slide-${index + 1}`}
+            aria-label={`Слайд ${index + 1} от 4`}
+          >
+            <article class="flex flex-col justify-between h-full relative p-base pb-medium xl:p-medium bg-gradient-to-b from-black/66 via-black/0 to-black to-85%">
+              <SectionHeading headingLevel="h3">
+                <a
+                  class="stretched-link block"
+                  href={`/available-cars/${car.slug.current}`}
+                >
+                  {car.title}
+                </a>
+              </SectionHeading>
+
+              <dl class="description-list gap-y-[4px] p-small corner-shape-xs bg-transparency backdrop-blur-md lg:p-base">
+                <div class="">
+                  <dt>Mileage</dt>
+                  <dd>
+                    {car.odometer
+                      .toLocaleString("bg-BG")
+                      .replace(/\s/g, "\u202F") + "\u202Fкм"}
+                  </dd>
+                </div>
+                <div class="">
+                  <dt>Engine</dt>
+                  <dd>{car.fuelType}</dd>
+                </div>
+                <div class="">
+                  <dt>Year</dt>
+                  <dd>{car.year}</dd>
+                </div>
+                <div class="">
+                  <dt>Drive</dt>
+                  <dd>{car.driveType}</dd>
+                </div>
+              </dl>
+              <SanityImg
+                image={car.imageForHero}
+                alt={`Фото ${car.title}`}
+                aspectRatio={{ mobile: 1, tablet: 1, desktop: 9 / 16 }}
+                style="absolute inset-0 bottom-1/8 -z-1"
+                loading="eager"
+                priority={true}
+              />
+            </article>
+          </li>
+        ))
+      }
+      <li id="slide-4" aria-roledescription="slide" aria-label="Слайд 4 от 4">
+        <LastSlide href="/available-cars" />
+      </li>
+    </ul>
+    <nav id="indicators-wrapper" aria-label="Навигация на каруселата">
+      <button
+        class="active"
+        data-indicator="0"
+        aria-label="Покажи слайд 1"
+        aria-controls="slide-1"></button>
+      <button
+        class=""
+        data-indicator="1"
+        aria-label="Покажи слайд 2"
+        aria-controls="slide-2"></button>
+      <button
+        class=""
+        data-indicator="2"
+        aria-label="Покажи слайд 3"
+        aria-controls="slide-3"></button>
+      <button
+        class=""
+        data-indicator="3"
+        aria-label="Покажи слайд 4"
+        aria-controls="slide-4"></button>
+    </nav>
+  </section>
+</section>
+
+<script>
+  import { initHeroCarousel } from "@scripts/hero-carousel";
+  document.addEventListener("astro:page-load", initHeroCarousel);
+</script>

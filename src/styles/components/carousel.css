@@ -1,0 +1,77 @@
+@layer components {
+  .carousel {
+    @apply flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory  *:snap-start;
+    scrollbar-width: none;
+    & > * {
+      @apply w-full shrink-0;
+    }
+  }
+
+  [data-carousel="with-scrollbar"] {
+    @apply gap-x-base mb-base;
+  }
+
+  #indicators-wrapper {
+    @apply absolute z-2 bottom-[calc(var(--spacing-medium)/2-3px)] flex gap-small w-full h-[6px] px-base  xl:px-medium;
+    & > button {
+      @apply grow relative bg-transparency corner-shape-xxs transition-colors duration-300;
+      &::before,
+      &::after {
+        content: "";
+        @apply absolute start-0 w-full;
+      }
+      &::before {
+        @apply top-[-6px] h-[18px];
+      }
+      &::after {
+        content: "";
+        @apply top-0 h-full corner-shape-xxs;
+      }
+      &.active::after {
+        @apply bg-white animate-[progressBar_5s_linear_forwards];
+      }
+    }
+  }
+
+  [data-scrollbar]::after {
+    content: "";
+    @apply absolute start-[var(--thumb-position,0%)] top-0 h-full w-[var(--thumb-width,0%)] bg-brand corner-shape-xxs;
+    /* transform: translateX(var(--thumb-position, 0%));
+    transition: transform 0.3s ease; */
+  }
+
+  [data-carousel-wrapper] {
+    @apply z-2;
+  }
+
+  .img-badge {
+    @apply absolute top-small start-small w-fit max-w-full px-small pt-[calc(var(--spacing-small)/2)] pb-[calc(var(--spacing-small)/1.5)] bg-black/60 backdrop-blur-sm corner-shape-xs;
+  }
+
+  @keyframes progressBar {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  @media (width >= 48rem) {
+    [data-carousel="with-scrollbar"] > * {
+      @apply w-[calc((100%-var(--spacing-base)*(var(--grid-cols)-1))/var(--grid-cols))];
+    }
+  }
+
+  @media (64rem <= width < 80rem) {
+    #popular-cars-carousel {
+      --grid-cols: 2;
+    }
+  }
+
+  @media (any-hover: hover) {
+    #indicators-wrapper button:not(.active):hover {
+      @apply bg-semi-transparent/50;
+    }
+  }
+}

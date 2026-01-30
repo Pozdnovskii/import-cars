@@ -1,0 +1,13 @@
+---
+const { id, style } = Astro.props;
+---
+
+<div
+  data-scrollbar
+  id={id}
+  class:list={[
+    "relative w-full h-[6px] overflow-hidden bg-transparency corner-shape-xxs",
+    style,
+  ]}
+>
+</div>

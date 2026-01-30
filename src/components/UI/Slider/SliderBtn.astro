@@ -1,0 +1,21 @@
+---
+const { carouselAction } = Astro.props;
+
+import Button from "@components/UI/Button.astro";
+import SwiperArrow from "@assets/svg/SwiperArrow.astro";
+
+const ariaLabel =
+  carouselAction === "prev"
+    ? "Предишен слайд"
+    : carouselAction === "next"
+      ? "Следващ слайд"
+      : undefined;
+---
+
+<Button
+  {...Astro.props}
+  squareBtn
+  aria={{
+    label: ariaLabel,
+  }}><SwiperArrow /></Button
+>

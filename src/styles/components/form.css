@@ -1,0 +1,66 @@
+@layer components {
+  #inquiry-dialog {
+    @apply left-1/2 top-1/2 -translate-1/2 w-xl max-w-[94vw] bg-transparent backdrop:bg-black/50 backdrop:backdrop-blur-xs;
+    & > div {
+      @apply bg-white;
+      form {
+        @apply relative flex flex-col gap-base text-base;
+        label {
+          @apply relative flex flex-col gap-small;
+          span:first-of-type {
+            @apply relative;
+          }
+          :is(input, textarea) {
+            @apply p-small text-gray-700 bg-gray-50 border border-transparent corner-shape-xs focus:outline-none focus-visible:border-black transition-colors;
+
+            &[aria-invalid="true"] {
+              @apply border-red-600;
+              & + span {
+                @apply block absolute -bottom-[1lh] text-red-600;
+              }
+            }
+          }
+          textarea {
+            @apply resize-none;
+          }
+          span:last-of-type {
+            display: none;
+          }
+
+          &:has(input[required]) span:first-of-type::after {
+            content: "*";
+            @apply absolute -top-[2px] ms-[4px] text-red-600 text-lg;
+          }
+        }
+      }
+    }
+  }
+
+  #close-modal-icon {
+    @apply absolute top-small end-0 w-[42px] bg-transparent cursor-pointer;
+    &::before,
+    &::after {
+      content: "";
+      @apply absolute w-1/2 h-[2px] bg-gray-400;
+    }
+    &::before {
+      @apply rotate-45;
+    }
+    &::after {
+      @apply -rotate-45;
+    }
+  }
+  #form-message {
+    @apply absolute top-0 h-full w-full items-center justify-center p-base corner-shape-sm;
+  }
+
+  #form-message.success {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  #form-message.error {
+    background: #f8d7da;
+    color: #721c24;
+  }
+}

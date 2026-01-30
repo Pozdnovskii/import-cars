@@ -1,0 +1,90 @@
+---
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+import { generateMeta } from "@sanity/lib/seo";
+
+import Layout from "@layouts/Layout.astro";
+
+import Hero from "@components/Sections/Hero.astro";
+import Steps from "@components/Sections/Steps.astro";
+import AuctionCars from "@components/Sections/AuctionCars/Slider.astro";
+import Testimonials from "@components/Sections/Testimonials.astro";
+import AvailableCars from "@components/Sections/AvailableCars/List.astro";
+import CTA from "@components/Sections/CTA.astro";
+
+import SectionHeading from "@components/UI/SectionHeading.astro";
+
+const { data: text } = await loadQuery<SanityDocument>({
+  query: `*[_type == "homePageTexts"][0]`,
+});
+
+const { data: seo } = await loadQuery<SanityDocument>({
+  query: `*[_type == "seoSettings"][0]{ siteName, homePage }`,
+});
+
+const meta =
+  seo?.siteName && seo?.homePage?.title && seo?.homePage?.description
+    ? generateMeta(
+        { siteName: seo.siteName },
+        {
+          titleTemplate: seo.homePage.title,
+          descriptionTemplate: seo.homePage.description,
+        }
+      )
+    : undefined;
+---
+
+<Layout title={meta?.title} description={meta?.description}>
+  <main id="main" class="wrapper max-md:pt-0">
+    <Hero
+      h1={text.h1}
+      descr={text.heroDescription}
+      button1={text.button1}
+      button2={text.button2}
+    />
+
+    <section id="steps">
+      <SectionHeading>{text.stepsSectionHeading}</SectionHeading>
+      <Steps stepsList={text.stepsList} />
+    </section>
+
+    <section id="popular">
+      <SectionHeading>{text.popularCarsSectionHeading}</SectionHeading>
+
+      <AuctionCars
+        headingLevel="h3"
+        carousel={true}
+        id="popular-cars-carousel"
+        limit="6"
+        minimumInfo
+      />
+    </section>
+
+    <section id="testimonials">
+      <SectionHeading>{text.testimonialsSectionHeading}</SectionHeading>
+      <Testimonials />
+    </section>
+
+    <section id="available">
+      <SectionHeading>{text.availableCarsSectionHeading}</SectionHeading>
+      <AvailableCars
+        headingLevel="h3"
+        carousel={true}
+        id="available-cars-carousel"
+      />
+    </section>
+
+    <CTA />
+  </main>
+</Layout>
+
+<script>
+  import { initCountdowns, cleanupCountdowns } from "@scripts/countdown";
+  import { initCarousels } from "@scripts/carousel";
+
+  document.addEventListener("astro:before-preparation", cleanupCountdowns);
+  document.addEventListener("astro:page-load", () => {
+    initCountdowns();
+    initCarousels();
+  });
+</script>

@@ -1,0 +1,58 @@
+---
+import Button from "@components/UI/Button.astro";
+import FormInput from "@components/UI/Forms/FormInput.astro";
+const { carId, name } = Astro.props;
+---
+
+<form method="post" id="inquiry-form" novalidate>
+  <input
+    type="text"
+    name="website"
+    tabindex="-1"
+    autocomplete="off"
+    aria-hidden="true"
+    style="position:absolute;left:-9999px"
+  />
+
+  {name && <input type="hidden" name={name} value={carId} />}
+
+  <input type="hidden" name="sourceUrl" value={Astro.url.href} />
+
+  <FormInput label="Имя" type="text" placeholder="Алекс" name="name" required />
+
+  <FormInput
+    label="Email"
+    type="email"
+    placeholder="email@example.com"
+    name="email"
+    required
+  />
+
+  <FormInput
+    label="Телефон"
+    type="tel"
+    placeholder="+359 XX XXX XXXX"
+    name="phone"
+    required
+  />
+
+  <FormInput
+    label="Коментар"
+    placeholder="Добавете коментар"
+    name="message"
+    otherAttrs={{ rows: "4", maxlength: "1000" }}
+    multiline
+  />
+
+  <Button
+    type="submit"
+    style="w-full py-base text-xl text-brand bg-brand/10 hover:bg-brand hover:text-white"
+    id="submit-btn"
+  >
+    Резервирай/Изпрати
+  </Button>
+
+  <div id="form-message" class="hidden" role="alert"></div>
+</form>
+
+<!-- Сообщение об ошибке/успехе -->

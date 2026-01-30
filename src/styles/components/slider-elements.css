@@ -1,0 +1,23 @@
+@layer components {
+  .slider-btns-wrapper {
+    @apply flex gap-small mb-base z-3;
+    .btn {
+      @apply p-0;
+      &[data-carousel-action="prev"] {
+        @apply rotate-180;
+      }
+      svg {
+        @apply w-[30px] aspect-square pointer-events-none;
+      }
+    }
+    &.imgs-carousel_btn-wrapper {
+      @apply absolute bottom-1 end-1 flex gap-x-small m-0;
+      &:has(.btn-big) {
+        @apply bottom-small end-small;
+      }
+      .btn {
+        @apply bg-black/60 hover:bg-black;
+      }
+    }
+  }
+}

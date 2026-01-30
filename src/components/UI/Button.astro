@@ -1,0 +1,49 @@
+---
+const {
+  id,
+  type,
+
+  style,
+  accentBtn,
+  disabledBtn,
+  bigBtn,
+  squareBtn,
+  socialLink,
+
+  aria = {},
+
+  href,
+  rel,
+  target,
+
+  onclick,
+  carouselAction,
+} = Astro.props;
+
+const Tag = href ? "a" : "button";
+const ariaAttrs = Object.fromEntries(
+  Object.entries(aria).map(([key, value]) => [`aria-${key}`, value])
+);
+---
+
+<Tag
+  id={id}
+  type={type}
+  href={href}
+  rel={rel}
+  target={target}
+  onclick={onclick}
+  data-carousel-action={carouselAction}
+  class:list={[
+    "btn",
+    accentBtn && "btn-gold",
+    disabledBtn && "btn-disabled",
+    bigBtn && "btn-big",
+    squareBtn && "btn-square",
+    socialLink && "social-link",
+    style,
+  ]}
+  {...ariaAttrs}
+>
+  <slot />
+</Tag>

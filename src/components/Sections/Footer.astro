@@ -1,0 +1,35 @@
+---
+import { Image } from "astro:assets";
+
+import Button from "@components/UI/Button.astro";
+import SocialLinks from "@components/UI/SocialLinks.astro";
+
+import logo from "@assets/images/logo.webp";
+
+const { contacts } = Astro.props;
+---
+
+<footer id="footer" class="wrapper" transition:persist>
+  <Image id="footer-logo" src={logo} alt="xclusive cars logo" fit="contain" />
+
+  <SocialLinks contacts={contacts} desktopLimit="5" />
+
+  <nav id="footer-nav" aria-label="Footer Nav">
+    <ul id="footer-ul">
+      <li>
+        <Button href="/#steps">Процес</Button>
+      </li>
+      <li>
+        <Button href="#">Каталог</Button>
+      </li>
+      <li>
+        <Button href="/available-cars">Налични автомобили</Button>
+      </li>
+    </ul>
+  </nav>
+
+  <div id="footer-subinfo">
+    <p>Всички права запазени</p>
+    <a href="#">Политика за поверителност</a>
+  </div>
+</footer>

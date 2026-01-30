@@ -1,0 +1,18 @@
+---
+import { Image } from "astro:assets";
+import stepsImage from "@images/step-img.webp";
+
+const { stepsList } = Astro.props;
+---
+
+<ol id="steps-list" class="layout-grid">
+  {
+    stepsList.map((step: any, i: number) => (
+      <li class="card">
+        <h3 class="btn">Стъпка {i + 1}</h3>
+        <p>{step}</p>
+        {i === 0 && <Image src={stepsImage} alt=" " aria-hidden="true" />}
+      </li>
+    ))
+  }
+</ol>

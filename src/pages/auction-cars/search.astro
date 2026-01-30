@@ -1,0 +1,55 @@
+---
+export const prerender = false;
+
+import Layout from "@layouts/Layout.astro";
+import AuctionCarPage from "@components/Sections/AuctionCars/AuctionCarPage.astro";
+
+import { turso } from "@turso/turso";
+
+import {
+  parseFilters,
+  getFilteredCars,
+  getFilteredPaginationData,
+} from "@turso/lib/filters";
+
+const filters = parseFilters(Astro.url.searchParams);
+
+let cars;
+let pagination;
+
+try {
+  [cars, pagination] = await Promise.all([
+    getFilteredCars(filters, turso),
+    getFilteredPaginationData(filters, turso),
+  ]);
+} catch (error) {
+  console.error("Search error:", error);
+  return Astro.redirect("/auction-cars");
+}
+
+const title = `Търсене на автомобили | XclusiveCars`;
+const description = `Резултати от търсене на аукционни автомобили.`;
+
+// noindex
+---
+
+<Layout title={title} description={description} noindex={true}>
+  <AuctionCarPage
+    cars={cars}
+    totalPages={pagination.totalPages}
+    currentPage={filters.page}
+    searchMode={true}
+    title=`Резултати от търсенето ${pagination.totalCars}`
+  />
+</Layout>
+
+<script>
+  import { initFilters } from "@scripts/filters";
+  import { initCountdowns, cleanupCountdowns } from "@scripts/countdown";
+
+  document.addEventListener("astro:before-preparation", cleanupCountdowns);
+  document.addEventListener("astro:page-load", () => {
+    initFilters("search");
+    initCountdowns();
+  });
+</script>

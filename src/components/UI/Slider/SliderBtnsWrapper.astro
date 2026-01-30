@@ -1,0 +1,10 @@
+---
+const { id, style, bigBtn } = Astro.props;
+
+import SliderBtn from "@components/UI/Slider/SliderBtn.astro";
+---
+
+<div id={id} class:list={["slider-btns-wrapper", style]}>
+  <SliderBtn carouselAction="prev" bigBtn={bigBtn} />
+  <SliderBtn carouselAction="next" bigBtn={bigBtn} />
+</div>

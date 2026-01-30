@@ -1,0 +1,41 @@
+---
+import type { SanityDocument } from "@sanity/client";
+import { loadQuery } from "@sanity/lib/load-query";
+import { generateMeta } from "@sanity/lib/seo";
+
+import Layout from "@layouts/Layout.astro";
+
+import AvailableCars from "@components/Sections/AvailableCars/List.astro";
+import SectionHeading from "@components/UI/SectionHeading.astro";
+
+const { data: seo } = await loadQuery<SanityDocument>({
+  query: `*[_type == "seoSettings"][0]{ siteName, availableCarsCatalogPage }`,
+});
+
+const meta =
+  seo?.siteName &&
+  seo?.availableCarsCatalogPage?.title &&
+  seo?.availableCarsCatalogPage?.description
+    ? generateMeta(
+        { siteName: seo.siteName },
+        {
+          titleTemplate: seo.availableCarsCatalogPage.title,
+          descriptionTemplate: seo.availableCarsCatalogPage.description,
+        }
+      )
+    : undefined;
+---
+
+<Layout title={meta?.title} description={meta?.description}>
+  <main id="main" class="wrapper">
+    <section>
+      <SectionHeading headingLevel="h1">Налични автомобили</SectionHeading>
+      <AvailableCars headingLevel="h2" style="layout-grid" />
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { initCarousels } from "@scripts/carousel";
+  document.addEventListener("astro:page-load", initCarousels);
+</script>

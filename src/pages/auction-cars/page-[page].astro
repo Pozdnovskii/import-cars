@@ -1,0 +1,51 @@
+---
+import { turso } from "@turso/turso";
+import { getCars, getPaginationData, ITEMS_PER_PAGE } from "@turso/lib/getCars";
+
+import Layout from "@layouts/Layout.astro";
+import AuctionCarPage from "@components/Sections/AuctionCars/AuctionCarPage.astro";
+
+export async function getStaticPaths() {
+  const { totalPages } = await getPaginationData(turso);
+
+  return Array.from({ length: totalPages - 1 }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { page: String(page) },
+      props: { page, totalPages },
+    };
+  });
+}
+
+const { page, totalPages } = Astro.props;
+
+const offset = (page - 1) * ITEMS_PER_PAGE;
+const cars = await getCars(turso, { offset });
+
+const title = `Аукционни коли от Америка - Страница ${page} | XclusiveCars`;
+const description = `Преглед на аукционни автомобили от Copart и IAAI - страница ${page} от ${totalPages}.`;
+
+const prevPage =
+  page === 2 ? "/auction-cars" : `/auction-cars/page-${page - 1}`;
+const nextPage = page < totalPages ? `/auction-cars/page-${page + 1}` : null;
+---
+
+<Layout
+  title={title}
+  description={description}
+  prevPage={prevPage}
+  nextPage={nextPage}
+>
+  <AuctionCarPage cars={cars} totalPages={totalPages} currentPage={page} />
+</Layout>
+
+<script>
+  import { initFilters } from "@scripts/filters";
+  import { initCountdowns, cleanupCountdowns } from "@scripts/countdown";
+
+  document.addEventListener("astro:before-preparation", cleanupCountdowns);
+  document.addEventListener("astro:page-load", () => {
+    initFilters("static");
+    initCountdowns();
+  });
+</script>

@@ -1,0 +1,114 @@
+@layer components {
+  #filters {
+    @apply w-full max-md:grid max-md:grid-cols-1 max-md:grid-rows-[max-content_0fr] max-md:gap-y-0 transition-all duration-750;
+    #filters-content {
+      @apply max-md:opacity-0 transition-all duration-750;
+    }
+    #close-filters-icon {
+      @apply relative flex items-center justify-center w-[42px] ms-auto opacity-0 transition-all duration-750;
+      &::before,
+      &::after {
+        content: "";
+        @apply absolute w-2/3 h-[2px] bg-brand;
+      }
+      &::before {
+        @apply rotate-45;
+      }
+      &::after {
+        @apply -rotate-45;
+      }
+    }
+    &.filters--open {
+      @apply max-md:grid-rows-[max-content_1fr] max-md:gap-y-base;
+      #filters-content {
+        @apply opacity-100;
+      }
+      #close-filters-icon {
+        @apply opacity-100;
+      }
+    }
+  }
+
+  .filter-field {
+    @apply flex items-center w-full p-small text-white bg-transparency corner-shape-xs border border-semi-transparent/36 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-none focus-visible:border-white;
+  }
+
+  .input-field {
+    @apply placeholder:text-semi-transparent/66;
+  }
+
+  .select-field {
+    background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9L12 15L18 9' stroke='white' stroke-opacity='0.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+    background-position: right var(--spacing-small) center;
+    @apply bg-no-repeat disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  input[type="checkbox"] {
+    & + div {
+      @apply gap-[8px] cursor-pointer;
+      &.filter-field {
+        @apply justify-between text-brand;
+      }
+      svg {
+        @apply bg-transparency corner-shape-xxs border border-transparent;
+        path {
+          @apply stroke-brand;
+        }
+      }
+    }
+
+    &:not([checked]) + div path {
+      @apply hidden;
+    }
+
+    &:focus-visible + div.filter-field,
+    &:focus-visible + div:not(.filter-field) svg {
+      @apply border-white;
+    }
+  }
+
+  select.filter-field:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  .filter-field[data-is-default="true"]:not(:focus-visible) {
+    @apply text-semi-transparent/66;
+  }
+
+  #filter-platform:has(input:not([checked])) input[checked] + div {
+    @apply cursor-not-allowed;
+  }
+
+  [data-slider] {
+    @apply relative flex items-center h-[20px];
+    &::after {
+      content: "";
+      @apply absolute  h-[4px];
+    }
+    &::before {
+      @apply bg-semi-transparent rounded-full;
+    }
+    &::after {
+      @apply start-(--range-left) end-(--range-right) bg-brand transition-all;
+    }
+    [data-thumb] {
+      @apply absolute w-[20px] aspect-square bg-white rounded-full cursor-grab transition-all z-3;
+      &[data-thumb$="-from"] {
+        @apply start-(--range-left) origin-left;
+      }
+      &[data-thumb$="-to"] {
+        @apply end-(--range-right) origin-right;
+      }
+      &:active {
+        @apply cursor-grabbing scale-85;
+      }
+      &:hover {
+        @apply contrast-75 scale-95;
+      }
+    }
+  }
+
+  [data-clear-filters] {
+    @apply w-full gap-2;
+  }
+}

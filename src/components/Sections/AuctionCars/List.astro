@@ -1,0 +1,15 @@
+---
+import AuctionCar from "@components/Sections/AuctionCars/Card.astro";
+
+const { cars } = Astro.props;
+---
+
+<ul class="catalog" data-cars-list>
+  {
+    cars?.map((car: any) => (
+      <li>
+        <AuctionCar car={car} />
+      </li>
+    ))
+  }
+</ul>

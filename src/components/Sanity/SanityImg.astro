@@ -1,0 +1,131 @@
+---
+import { urlForImage } from "@sanity/lib/url-for-image";
+
+const {
+  image,
+  alt,
+  id,
+  aspectRatio = 5 / 3,
+  loading = "lazy",
+  style,
+  sizes = {
+    small: 350, // 320px - 374px
+    mobile: 430, // 375px - 460px
+    large: 600, // 461px - 639px
+    xLarge: 512, // 640px - 767px
+    tablet: 460, // 768px - 980px
+    desktopSmall: 600, // 981px - 1279px
+    desktop: 480, // 1280px+
+  },
+  priority = false,
+} = Astro.props;
+
+function getAspectRatio(device: "mobile" | "tablet" | "desktop"): number {
+  if (typeof aspectRatio === "number") {
+    return aspectRatio;
+  } else {
+    return aspectRatio[device] ?? 5 / 3;
+  }
+}
+
+function generateSrcSet(width: number, height: number) {
+  const baseUrl = urlForImage(image.asset)
+    .width(width)
+    .height(height)
+    .fit("crop")
+    .focalPoint(0, 0);
+
+  return [
+    `${baseUrl.dpr(1).format("webp").url()} 1x`,
+    `${baseUrl.dpr(2).format("webp").url()} 2x`,
+  ].join(", ");
+}
+---
+
+<picture class:list={["[&>img]:object-cover", style]} id={id}>
+  <source
+    media="(max-width: 23.375rem)"
+    srcset={generateSrcSet(
+      sizes.small,
+      Math.round(sizes.small / getAspectRatio("mobile"))
+    )}
+    sizes="94vw"
+    type="image/webp"
+  />
+
+  <source
+    media="(min-width: 23.4375rem) and (max-width: 28.75rem)"
+    srcset={generateSrcSet(
+      sizes.mobile,
+      Math.round(sizes.mobile / getAspectRatio("mobile"))
+    )}
+    sizes="94vw"
+    type="image/webp"
+  />
+
+  <source
+    media="(min-width: 28.8125rem) and (max-width: 39.9375rem)"
+    srcset={generateSrcSet(
+      sizes.large,
+      Math.round(sizes.large / getAspectRatio("mobile"))
+    )}
+    sizes="94vw"
+    type="image/webp"
+  />
+
+  <!-- Tablet -->
+  <source
+    media="(min-width: 40rem) and (max-width: 47.9375rem)"
+    srcset={generateSrcSet(
+      sizes.xLarge,
+      Math.round(sizes.xLarge / getAspectRatio("tablet"))
+    )}
+    sizes="46vw"
+    type="image/webp"
+  />
+
+  <source
+    media="(min-width: 48rem) and (max-width: 61.25rem)"
+    srcset={generateSrcSet(
+      sizes.tablet,
+      Math.round(sizes.tablet / getAspectRatio("tablet"))
+    )}
+    sizes="46vw"
+    type="image/webp"
+  />
+
+  <source
+    media="(min-width: 61.3125rem) and (max-width: 79.9375rem)"
+    srcset={generateSrcSet(
+      sizes.desktopSmall,
+      Math.round(sizes.desktopSmall / getAspectRatio("desktop"))
+    )}
+    sizes="46vw"
+    type="image/webp"
+  />
+
+  <source
+    media="(min-width: 80rem)"
+    srcset={generateSrcSet(
+      sizes.desktop,
+      Math.round(sizes.desktop / getAspectRatio("desktop"))
+    )}
+    sizes="(min-width: 90rem) 480px, 33vw"
+    type="image/webp"
+  />
+
+  <img
+    src={urlForImage(image.asset)
+      .width(sizes.desktop)
+      .height(Math.round(sizes.desktop / getAspectRatio("desktop")))
+      .fit("crop")
+      .focalPoint(0, 0)
+      .format("webp")
+      .url()}
+    alt={alt}
+    loading={loading}
+    decoding="async"
+    fetchpriority={priority ? "high" : "auto"}
+    class="w-full h-full"
+  />
+</picture>

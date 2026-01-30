@@ -1,0 +1,212 @@
+---
+import SectionHeading from "@components/UI/SectionHeading.astro";
+import Button from "@components/UI/Button.astro";
+import SliderBtnsWrapper from "@components/UI/Slider/SliderBtnsWrapper.astro";
+
+const { car, headingLevel, minimumInfo = false } = Astro.props;
+
+function truncate(str: string, max: number) {
+  return str.length > max ? str.slice(0, max) + "..." : str;
+}
+---
+
+<article class="card relative h-full @container">
+  <SectionHeading
+    style="mb-0 text-[1.125em] text-balance line-clamp-1"
+    headingLevel={headingLevel}
+  >
+    {car.heading}
+  </SectionHeading>
+
+  {
+    minimumInfo && (
+      <section
+        class="md:text-[.875em] leading-none"
+        data-countdown-end={car.saleDate}
+        data-countdown-labels
+        aria-label="Countdown to auction end"
+      >
+        <span data-countdown="days">00</span>д
+        <span data-countdown="hours">00</span>ч
+        <span data-countdown="minutes">00</span>м
+        <span data-countdown="seconds" class="inline-block w-[1.1em]">
+          00
+        </span>
+        с
+      </section>
+    )
+  }
+
+  <dl
+    class="description-list py-base border-t border-t-semi-transparent/36 md:text-[.875em] md:gap-y-small"
+  >
+    {
+      car.auctionPlatform && (
+        <div>
+          <dt>Източник</dt>
+          <dd
+            class:list={[
+              "badge",
+              {
+                copart: car.auctionPlatform === "copart",
+                iaai: car.auctionPlatform === "IAAI ",
+              },
+            ]}
+          >
+            {car.auctionPlatform}
+          </dd>
+        </div>
+      )
+    }
+    {
+      car.manufactureYear && (
+        <div>
+          <dt>Година</dt>
+          <dd>{car.manufactureYear}</dd>
+        </div>
+      )
+    }
+    {
+      car.odometerKm && (
+        <div>
+          <dt>Пробег</dt>
+          <dd>
+            {(car.odometerKm as any)
+              .toLocaleString("bg-BG" as string)
+              .replace(/\s/g, "\u202F") + "\u202Fкм"}
+          </dd>
+        </div>
+      )
+    }
+    {
+      !minimumInfo && car.engine && (
+        <div>
+          <dt>Двигател</dt>
+          <dd>{truncate(car.engine, 20)}</dd>
+        </div>
+      )
+    }
+    {
+      car.movableConditionBulgarian && (
+        <div>
+          <dt>Състояние</dt>
+          <dd
+            class:list={[
+              "badge",
+              {
+                good: car.movableConditionBulgarian === "Добре",
+                iaai: car.auctionPlatform === "IAAI ",
+              },
+            ]}
+          >
+            {car.movableConditionBulgarian}
+          </dd>
+        </div>
+      )
+    }
+  </dl>
+
+  {
+    !minimumInfo ? (
+      <div class="flex flex-col gap-y-small mt-auto *:w-full *:py-base md:text-[.875em]">
+        {Boolean(car.isBuyNow) &&
+        car.saleDate > Math.floor(Date.now() / 1000) ? (
+          <Button accentBtn>
+            {"Купи сега: " +
+              car.estimatedPriceToBulgariaBgn
+                .toLocaleString("bg-BG")
+                .replace(/\s/g, "\u202F") +
+              "\u202Fлев"}
+          </Button>
+        ) : (
+          <Button disabledBtn>Купи сега: -</Button>
+        )}
+        <Button href={`/auction-cars/${car.slug}`}>Подробности</Button>
+      </div>
+    ) : (
+      <div class="@max-[15.9em]:flex-col mt-auto max-sm:*:px-small flex gap-small md:text-[.875em] *:flex-col *:items-start *:w-full *:gap-[.5em] *:text-start [&_span:first-of-type]:text-[.875em]">
+        {Boolean(car.isBuyNow) &&
+          car.saleDate > Math.floor(Date.now() / 1000) && (
+            <Button accentBtn>
+              <span>Купи сега:</span>
+              <span>
+                {car.estimatedPriceToBulgariaBgn
+                  .toLocaleString("bg-BG")
+                  .replace(/\s/g, "\u202F") + "\u202Fлев"}
+              </span>
+            </Button>
+          )}
+        <Button href={`/auction-cars/${car.slug}`}>
+          <span>Виж повече:</span>
+          <span>Подробности</span>
+        </Button>
+      </div>
+    )
+  }
+
+  {
+    minimumInfo ? (
+      <div
+        class="-order-1 relative overflow-hidden corner-shape-sm"
+        data-carousel-wrapper
+      >
+        <div class="carousel aspect-[5/3]" data-carousel>
+          {JSON.parse(car.imageUrls)
+            .slice(0, 5)
+            .map((url: string, i: number) =>
+              i < 4 ? (
+                <img
+                  style="object-fit: cover;"
+                  src={url}
+                  alt={`Фото ${car.heading} ${i + 1}`}
+                  loading="lazy"
+                />
+              ) : (
+                <div class="relative h-full flex items-center justify-center *:first:absolute *:first:-z-1 *:first:blur-md">
+                  <img
+                    src={url}
+                    alt={`Фото ${car.heading} ${i + 1}`}
+                    loading="lazy"
+                  />
+                  <Button
+                    href={`/auction-cars/${car.slug}`}
+                    style="stretched-link"
+                    accentBtn
+                  >
+                    Виж повече
+                  </Button>
+                </div>
+              )
+            )}
+        </div>
+        <SliderBtnsWrapper style="imgs-carousel_btn-wrapper" />
+      </div>
+    ) : (
+      !minimumInfo && (
+        <div class="relative -order-1 overflow-hidden aspect-[4/3] corner-shape-sm">
+          <img
+            class="object-cover w-full h-full"
+            src={JSON.parse(car.imageUrls)[0]}
+            alt={`Фото ${car.heading}`}
+            loading="lazy"
+          />
+          {car.saleDate && (
+            <section
+              data-countdown-end={car.saleDate}
+              data-countdown-labels
+              aria-label="Countdown to auction end"
+            >
+              <span data-countdown="days">00</span>д
+              <span data-countdown="hours">00</span>ч
+              <span data-countdown="minutes">00</span>м
+              <span data-countdown="seconds" class="inline-block w-[1.1em]">
+                00
+              </span>
+              с
+            </section>
+          )}
+        </div>
+      )
+    )
+  }
+</article>

@@ -1,0 +1,32 @@
+---
+import { Image } from "astro:assets";
+
+import SectionHeading from "@components/UI/SectionHeading.astro";
+import Button from "@components/UI/Button.astro";
+
+import imgDesk from "@images/cta-img.webp";
+import imgMob from "@images/cta-img-mob.webp";
+---
+
+<section id="cta" class="card">
+  <div id="cta-content">
+    <SectionHeading
+      style="mb-0 text-[1.5em] md:text-[clamp(2.25rem,-0.4rem+4.15vw,3.75rem)]"
+      >Присъедини се към нашата Viber група и не изпускай автомобили от
+      САЩ/Канада, специално подбрани от нашите консултанти</SectionHeading
+    >
+    <ul class="flex flex-col gap-base mb-base ps-[1.5ch] list-disc">
+      <li>Оферти за търгове секи Ден</li>
+      <li>Възможност да грабнеш офертите пръв</li>
+      <li>Налични автомобили</li>
+    </ul>
+
+    <Button
+      accentBtn
+      style="py-base text-[1.25em] leading-tight max-md:w-full md:mt-auto"
+      >Присъедини се във VIP групата</Button
+    >
+  </div>
+  <Image id="cta-img-desk" src={imgDesk} alt=" " aria-hidden="true" />
+  <Image id="cta-img-mob" src={imgMob} alt=" " aria-hidden="true" />
+</section>

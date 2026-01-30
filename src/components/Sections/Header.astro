@@ -1,0 +1,53 @@
+---
+import { Image } from "astro:assets";
+
+import Button from "@components/UI/Button.astro";
+
+import logo from "@images/logo.webp";
+import SocialLinks from "@components/UI/SocialLinks.astro";
+
+const { contacts } = Astro.props;
+---
+
+<header id="header" class="wrapper" transition:persist>
+  <a href="/" aria-label="Home Page" class="z-1">
+    <Image
+      id="header-logo"
+      src={logo}
+      alt="xclusive cars logo"
+      fit="contain"
+      priority
+    />
+  </a>
+
+  <Button
+    id="header-btn"
+    aria={{
+      label: "Toggle menu",
+      controls: "header-nav",
+      expanded: "false",
+    }}
+  />
+
+  <nav id="header-nav" aria-label="Primary">
+    <ul id="header-ul">
+      <li style="--index: 1">
+        <Button href="/#steps">Процес</Button>
+      </li>
+      <li style="--index: 2">
+        <Button href="/available-cars">Налични автомобили</Button>
+      </li>
+      <li style="--index: 3">
+        <Button href="/auction-cars">Каталог</Button>
+      </li>
+    </ul>
+
+    <SocialLinks contacts={contacts} />
+  </nav>
+</header>
+
+<script>
+  import { initHeader } from "@scripts/mobile-menu";
+
+  document.addEventListener("astro:page-load", initHeader);
+</script>
