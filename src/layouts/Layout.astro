@@ -37,6 +37,33 @@ const prevURL = prevPage ? new URL(prevPage, Astro.site).href : null;
 const nextURL = nextPage ? new URL(nextPage, Astro.site).href : null;
 
 const enableAnalytics = import.meta.env.PUBLIC_ENABLE_ANALYTICS === "true";
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  name: "xclusiveCars",
+  description: "Професионален внос на автомобили от САЩ и Канада до България",
+  url: Astro.site?.href,
+  logo: new URL("/favicon.webp", Astro.site).href,
+  image: new URL("/opengraph.png", Astro.site).href,
+  telephone: contacts?.phone?.forLink,
+  email: contacts?.email,
+  areaServed: {
+    "@type": "Country",
+    name: "Bulgaria",
+  },
+  sameAs: [
+    contacts?.facebook,
+    contacts?.instagram,
+  ].filter(Boolean),
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "xclusiveCars",
+  url: Astro.site?.href,
+};
 ---
 
 <!doctype html>
@@ -71,6 +98,9 @@ const enableAnalytics = import.meta.env.PUBLIC_ENABLE_ANALYTICS === "true";
     {noindex && <meta name="robots" content="noindex, follow" />}
 
     <ClientRouter />
+
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
     {enableAnalytics && (
       <>

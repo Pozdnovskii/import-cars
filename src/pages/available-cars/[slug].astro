@@ -42,6 +42,38 @@ const meta =
   seo?.siteName && seo?.availableCarPageTemplate
     ? generateAvailableCarMeta(car, seo.availableCarPageTemplate, seo.siteName)
     : undefined;
+
+const carSchema = {
+  "@context": "https://schema.org",
+  "@type": "Car",
+  name: car.title,
+  description: meta?.description || car.description,
+  url: new URL(`/available-cars/${slug}`, Astro.site).href,
+  image: urlForImage(car.gallery[0].asset).url(),
+  vehicleIdentificationNumber: car.VIN || undefined,
+  modelDate: car.year?.toString(),
+  mileageFromOdometer: car.odometer ? {
+    "@type": "QuantitativeValue",
+    value: car.odometer,
+    unitCode: "KMT",
+  } : undefined,
+  fuelType: car.fuelType,
+  vehicleTransmission: car.transmission,
+  driveWheelConfiguration: car.driveType,
+  numberOfDoors: car.doors,
+  vehicleSeatingCapacity: car.seets,
+  color: car.color,
+  offers: car.price ? {
+    "@type": "Offer",
+    price: car.price,
+    priceCurrency: "BGN",
+    availability: car.sold ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+    seller: {
+      "@type": "AutoDealer",
+      name: "xclusiveCars",
+    },
+  } : undefined,
+};
 ---
 
 <Layout
@@ -49,6 +81,7 @@ const meta =
   description={meta?.description}
   image={urlForImage(car.gallery[0].asset).url()}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(carSchema)} />
   <main id="main" class="wrapper pt-0">
     <article class="layout-grid lg:grid-rows-[max-content_1fr] *:col-span-2">
       <header
