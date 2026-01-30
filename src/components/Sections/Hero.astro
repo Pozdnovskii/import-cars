@@ -26,8 +26,16 @@ const { data: cars } = await loadQuery<SanityDocument[]>({
     <div
       class="flex flex-col gap-y-3 mt-auto *:w-full *:corner-shape-sm *:py-[1em]"
     >
-      <Button accentBtn>{button1}</Button>
-      <Button href="/available-cars">{button2}</Button>
+      <Button
+        accentBtn
+        umamiEvent="hero-cta"
+        aria={{
+          haspopup: "dialog",
+          controls: "inquiry-dialog",
+        }}
+        onclick="document.getElementById('inquiry-dialog').showModal()"
+      >{button1}</Button>
+      <Button href="/available-cars" umamiEvent="hero-available">{button2}</Button>
     </div>
   </div>
 

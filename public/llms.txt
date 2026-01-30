@@ -1,0 +1,27 @@
+# xclusiveCars
+
+> Professional car import service from USA and Canada to Bulgaria
+
+## About
+
+xclusiveCars is a Bulgarian company specializing in importing vehicles from American auto auctions (Copart, IAAI) and delivering them to customers in Bulgaria. We handle the entire process: selection, bidding, purchase, shipping, customs clearance, and delivery.
+
+## Services
+
+- Car selection from USA/Canada auctions (Copart, IAAI)
+- Bidding and purchase assistance
+- International shipping to Bulgaria
+- Customs clearance and registration
+- Door-to-door delivery
+- Full documentation support
+
+## Website Sections
+
+- `/` - Homepage with featured cars and services overview
+- `/available-cars` - Ready-to-buy cars already in Bulgaria
+- `/auction-cars` - Cars available at US auctions with price estimates
+- `/auction-cars/[slug]` - Individual auction car details with countdown to sale
+
+## Contact
+
+Website: https://cars.weblateweb.dev

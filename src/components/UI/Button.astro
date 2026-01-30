@@ -18,6 +18,7 @@ const {
 
   onclick,
   carouselAction,
+  umamiEvent,
 } = Astro.props;
 
 const Tag = href ? "a" : "button";
@@ -34,6 +35,7 @@ const ariaAttrs = Object.fromEntries(
   target={target}
   onclick={onclick}
   data-carousel-action={carouselAction}
+  data-umami-event={umamiEvent}
   class:list={[
     "btn",
     accentBtn && "btn-gold",

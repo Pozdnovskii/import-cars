@@ -1,0 +1,35 @@
+---
+import Layout from "@layouts/Layout.astro";
+---
+
+<Layout
+  title="404 - Страницата не е намерена | xclusiveCars"
+  description="Страницата, която търсите, не съществува."
+  noindex={true}
+>
+  <main class="min-h-[60vh] flex items-center justify-center px-4">
+    <div class="text-center">
+      <h1 class="text-8xl font-bold text-accent mb-4">404</h1>
+      <h2 class="text-2xl md:text-3xl font-semibold mb-4">
+        Страницата не е намерена
+      </h2>
+      <p class="text-gray-400 mb-8 max-w-md mx-auto">
+        Страницата, която търсите, не съществува или е била преместена.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center px-6 py-3 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-colors"
+        >
+          Към началната страница
+        </a>
+        <a
+          href="/available-cars"
+          class="inline-flex items-center justify-center px-6 py-3 border border-accent text-accent font-semibold rounded-lg hover:bg-accent/10 transition-colors"
+        >
+          Разгледай наличните коли
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>

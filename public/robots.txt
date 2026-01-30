@@ -1,2 +1,15 @@
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /studio/
+Disallow: /api/
+Disallow: /search
+
+Sitemap: https://cars.weblateweb.dev/sitemap-index.xml
+
+# LLMs
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Claude-Web
+User-agent: Anthropic-AI
+User-agent: Google-Extended
+Allow: /llms.txt

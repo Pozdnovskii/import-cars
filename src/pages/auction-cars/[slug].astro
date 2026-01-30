@@ -227,9 +227,10 @@ if (car.status === "sold") {
           <Button
             href="viber://chat?number=%2B359878866739"
             target="_blank"
-            rel="noopener">Пиши ни</Button
+            rel="noopener"
+            umamiEvent="click-viber-auction">Пиши ни</Button
           >
-          <Button href="tel:+359876888994">Обади се</Button>
+          <Button href="tel:+359876888994" umamiEvent="click-phone-auction">Обади се</Button>
           <Button
             aria={{
               haspopup: "dialog",
@@ -237,7 +238,8 @@ if (car.status === "sold") {
             }}
             onclick="document.getElementById('inquiry-dialog').showModal()"
             style="col-span-2"
-            accentBtn>Резервирай</Button
+            accentBtn
+            umamiEvent="click-reserve-auction">Резервирай</Button
           >
         </div>
         <p class="text-brand text-[.875em] lg:text-[.75em] leading-none">
@@ -337,7 +339,7 @@ if (car.status === "sold") {
             )
           }
         </dl>
-        <Button href="#" style="mt-auto w-full py-base"
+        <Button href="#" style="mt-auto w-full py-base" umamiEvent="click-carfax"
           >Провери сега Carfax</Button
         >
       </section>

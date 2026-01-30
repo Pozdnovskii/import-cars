@@ -10,20 +10,22 @@ import Phone from "@assets/svg/SocialLinks/Phone.astro";
 const { contacts, desktopLimit = 2 } = Astro.props;
 
 const socialLinks = [
-  { href: contacts?.viber, label: "Viber group", icon: Viber },
-  { href: contacts?.instagram, label: "Instagram link", icon: Instagram },
-  { href: contacts?.facebook, label: "Facebook link", icon: Facebook },
+  { href: contacts?.viber, label: "Viber group", icon: Viber, event: "click-viber" },
+  { href: contacts?.instagram, label: "Instagram link", icon: Instagram, event: "click-instagram" },
+  { href: contacts?.facebook, label: "Facebook link", icon: Facebook, event: "click-facebook" },
   {
     href: contacts?.email ? `mailto:${contacts.email}` : null,
     label: "Email",
     icon: Mail,
     isMail: true,
+    event: "click-email",
   },
   {
     href: contacts?.phone?.forLink ? `tel:${contacts.phone.forLink}` : null,
     label: "Phone",
     icon: Phone,
     isPhone: true,
+    event: "click-phone",
   },
 ].filter((link) => link.href);
 ---
@@ -48,6 +50,7 @@ const socialLinks = [
                 label: link.label,
               }}
               socialLink
+              umamiEvent={link.event}
             >
               <Icon />
             </Button>

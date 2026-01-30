@@ -1,5 +1,5 @@
 import { defineConfig, envField, fontProviders } from "astro/config";
-// import sitemap from "@astrojs/sitemap";
+import sitemap from "@astrojs/sitemap";
 import { fileURLToPath } from "url";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
@@ -10,13 +10,7 @@ import cloudflare from "@astrojs/cloudflare";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  //   site: "https://xclusivecars-website.pages.dev",
-  // integrations: [
-  //   sitemap({
-  //     filter: (page) => !page.includes("/table") && !page.includes("/table-2"),
-  //   }),
-  // ],
-  // output: "server",
+  site: "https://cars.weblateweb.dev",
 
   vite: {
     plugins: [tailwindcss()],
@@ -41,7 +35,9 @@ export default defineConfig({
       studioBasePath: "/studio",
     }),
     react(),
-    // sitemap()
+    sitemap({
+      filter: (page) => !page.includes("/search") && !page.includes("/studio"),
+    }),
   ],
 
   adapter: cloudflare({

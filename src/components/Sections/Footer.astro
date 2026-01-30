@@ -17,13 +17,13 @@ const { contacts } = Astro.props;
   <nav id="footer-nav" aria-label="Footer Nav">
     <ul id="footer-ul">
       <li>
-        <Button href="/#steps">Процес</Button>
+        <Button href="/#steps" umamiEvent="footer-steps">Процес</Button>
       </li>
       <li>
-        <Button href="#">Каталог</Button>
+        <Button href="/auction-cars" umamiEvent="footer-catalog">Каталог</Button>
       </li>
       <li>
-        <Button href="/available-cars">Налични автомобили</Button>
+        <Button href="/available-cars" umamiEvent="footer-available">Налични автомобили</Button>
       </li>
     </ul>
   </nav>

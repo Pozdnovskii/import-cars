@@ -35,7 +35,7 @@ const DeployAction: DocumentActionComponent = (props) => {
 };
 
 export default defineConfig({
-  projectId: "bdybwg3q",
+  projectId: "ecxzhw3v",
   dataset: "production",
 
   plugins: [structureTool()],
