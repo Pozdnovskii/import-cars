@@ -26,10 +26,10 @@ export default defineConfig({
 
   integrations: [
     sanity({
-      projectId: "bdybwg3q",
+      projectId: "ecxzhw3v",
       dataset: "production",
       useCdn: true,
-      apiVersion: "2025-09-25",
+      apiVersion: "2026-01-30",
       studioBasePath: "/studio",
     }),
     react(),
@@ -45,6 +45,7 @@ export default defineConfig({
       DEPLOY_HOOK: envField.string({
         context: "server",
         access: "secret",
+        optional: true,
       }),
 
       TURSO_DATABASE_URL: envField.string({
