@@ -77,6 +77,9 @@ export const availableCarsType = defineType({
       of: [
         {
           type: "image",
+          options: {
+            hotspot: true,
+          },
           fields: [
             defineField({
               name: "alttext",
