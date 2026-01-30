@@ -11,7 +11,7 @@
       "@layouts/*": ["src/layouts/*"],
       "@sanity/*": ["src/sanity/*"],
       "@scripts/*": ["src/scripts/*"],
-      "@styles/*": ["src/styles/*"],
+      // "@styles/*": ["src/styles/*"],
       "@turso/*": ["src/turso/*"]
     }
   }

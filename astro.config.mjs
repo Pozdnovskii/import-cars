@@ -1,10 +1,13 @@
 import { defineConfig, envField, fontProviders } from "astro/config";
 // import sitemap from "@astrojs/sitemap";
-
+import { fileURLToPath } from "url";
+import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import sanity from "@sanity/astro";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   //   site: "https://xclusivecars-website.pages.dev",
@@ -17,6 +20,11 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        "@styles": path.resolve(__dirname, "./src/styles"),
+      },
+    },
   },
 
   image: {
