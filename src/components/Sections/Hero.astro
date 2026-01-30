@@ -87,8 +87,8 @@ const { data: cars } = await loadQuery<SanityDocument[]>({
                 alt={`Фото ${car.title}`}
                 aspectRatio={{ mobile: 1, tablet: 1, desktop: 9 / 16 }}
                 style="absolute inset-0 bottom-1/8 -z-1"
-                loading="eager"
-                priority={true}
+                loading={index === 0 ? "eager" : "lazy"}
+                priority={index === 0}
               />
             </article>
           </li>

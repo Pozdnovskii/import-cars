@@ -84,7 +84,7 @@ const {
               <SanityImg
                 image={url}
                 alt=""
-                loading={index < 4 ? "eager" : "lazy"}
+                loading="lazy"
                 sizes={{
                   small: 100,
                   mobile: 120,
@@ -100,7 +100,7 @@ const {
                 src={url}
                 alt=""
                 class="w-full h-full object-cover"
-                loading={index < 4 ? "eager" : "lazy"}
+                loading="lazy"
               />
             )}
           </button>
