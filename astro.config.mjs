@@ -1,4 +1,4 @@
-import { defineConfig, envField } from "astro/config";
+import { defineConfig, envField, fontProviders } from "astro/config";
 // import sitemap from "@astrojs/sitemap";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -63,7 +63,7 @@ export default defineConfig({
   experimental: {
     fonts: [
       {
-        provider: "local",
+        provider: fontProviders.local(),
         name: "Jura",
         cssVariable: "--font-jura",
         variants: [
