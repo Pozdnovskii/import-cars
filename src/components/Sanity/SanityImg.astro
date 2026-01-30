@@ -29,15 +29,15 @@ function getAspectRatio(device: "mobile" | "tablet" | "desktop"): number {
 }
 
 function generateSrcSet(width: number, height: number) {
-  const baseUrl = urlForImage(image.asset)
+  const baseUrl = urlForImage(image)
     .width(width)
     .height(height)
     .fit("crop")
-    .focalPoint(0, 0);
+    .auto("format");
 
   return [
-    `${baseUrl.dpr(1).format("webp").url()} 1x`,
-    `${baseUrl.dpr(2).format("webp").url()} 2x`,
+    `${baseUrl.dpr(1).url()} 1x`,
+    `${baseUrl.dpr(2).url()} 2x`,
   ].join(", ");
 }
 ---
@@ -50,8 +50,7 @@ function generateSrcSet(width: number, height: number) {
       Math.round(sizes.small / getAspectRatio("mobile"))
     )}
     sizes="94vw"
-    type="image/webp"
-  />
+      />
 
   <source
     media="(min-width: 23.4375rem) and (max-width: 28.75rem)"
@@ -60,8 +59,7 @@ function generateSrcSet(width: number, height: number) {
       Math.round(sizes.mobile / getAspectRatio("mobile"))
     )}
     sizes="94vw"
-    type="image/webp"
-  />
+      />
 
   <source
     media="(min-width: 28.8125rem) and (max-width: 39.9375rem)"
@@ -70,8 +68,7 @@ function generateSrcSet(width: number, height: number) {
       Math.round(sizes.large / getAspectRatio("mobile"))
     )}
     sizes="94vw"
-    type="image/webp"
-  />
+      />
 
   <!-- Tablet -->
   <source
@@ -81,8 +78,7 @@ function generateSrcSet(width: number, height: number) {
       Math.round(sizes.xLarge / getAspectRatio("tablet"))
     )}
     sizes="46vw"
-    type="image/webp"
-  />
+      />
 
   <source
     media="(min-width: 48rem) and (max-width: 61.25rem)"
@@ -91,8 +87,7 @@ function generateSrcSet(width: number, height: number) {
       Math.round(sizes.tablet / getAspectRatio("tablet"))
     )}
     sizes="46vw"
-    type="image/webp"
-  />
+      />
 
   <source
     media="(min-width: 61.3125rem) and (max-width: 79.9375rem)"
@@ -101,8 +96,7 @@ function generateSrcSet(width: number, height: number) {
       Math.round(sizes.desktopSmall / getAspectRatio("desktop"))
     )}
     sizes="46vw"
-    type="image/webp"
-  />
+      />
 
   <source
     media="(min-width: 80rem)"
@@ -111,16 +105,14 @@ function generateSrcSet(width: number, height: number) {
       Math.round(sizes.desktop / getAspectRatio("desktop"))
     )}
     sizes="(min-width: 90rem) 480px, 33vw"
-    type="image/webp"
-  />
+      />
 
   <img
-    src={urlForImage(image.asset)
+    src={urlForImage(image)
       .width(sizes.desktop)
       .height(Math.round(sizes.desktop / getAspectRatio("desktop")))
       .fit("crop")
-      .focalPoint(0, 0)
-      .format("webp")
+      .auto("format")
       .url()}
     alt={alt}
     loading={loading}
