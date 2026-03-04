@@ -115,6 +115,7 @@ const cars = [
                 alt={`Фото ${car.title}`}
                 class="absolute inset-0 bottom-1/8 -z-1 w-full h-full object-cover"
                 loading={index === 0 ? "eager" : "lazy"}
+                fetchpriority={index === 0 ? "high" : "auto"}
               />
             </article>
           </li>

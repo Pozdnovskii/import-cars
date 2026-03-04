@@ -415,13 +415,19 @@ const carSchema = {
 
 <script>
   import { initTooltips } from "@scripts/tooltip";
+
+  document.addEventListener("astro:page-load", initTooltips);
+</script>
+
+<script>
   import { initCountdowns, cleanupCountdowns } from "@scripts/countdown";
-  import { initCarousels } from "@scripts/carousel";
 
   document.addEventListener("astro:before-preparation", cleanupCountdowns);
-  document.addEventListener("astro:page-load", () => {
-    initTooltips();
-    initCountdowns();
-    initCarousels();
-  });
+  document.addEventListener("astro:page-load", initCountdowns);
+</script>
+
+<script>
+  import { initCarousels } from "@scripts/carousel";
+
+  document.addEventListener("astro:page-load", initCarousels);
 </script>

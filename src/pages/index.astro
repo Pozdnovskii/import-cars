@@ -83,11 +83,13 @@ const meta =
 
 <script>
   import { initCountdowns, cleanupCountdowns } from "@scripts/countdown";
-  import { initCarousels } from "@scripts/carousel";
 
   document.addEventListener("astro:before-preparation", cleanupCountdowns);
-  document.addEventListener("astro:page-load", () => {
-    initCountdowns();
-    initCarousels();
-  });
+  document.addEventListener("astro:page-load", initCountdowns);
+</script>
+
+<script>
+  import { initCarousels } from "@scripts/carousel";
+
+  document.addEventListener("astro:page-load", initCarousels);
 </script>

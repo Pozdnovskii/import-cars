@@ -91,14 +91,11 @@
     }
   }
 
-  [data-gallery] {
+  /* [data-gallery] {
     @apply opacity-0 transition-all duration-400;
     view-transition-name: none;
-    /* button {
-        @apply max-w-1/4;
-      } */
     &.swiper-initialized {
       @apply opacity-100;
     }
-  }
+  } */
 }

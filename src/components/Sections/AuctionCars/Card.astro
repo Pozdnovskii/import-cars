@@ -160,6 +160,7 @@ function truncate(str: string, max: number) {
                   src={url}
                   alt={`Фото ${car.heading} ${i + 1}`}
                   loading="lazy"
+                  fetchpriority="low"
                 />
               ) : (
                 <div class="relative h-full flex items-center justify-center *:first:absolute *:first:-z-1 *:first:blur-md">
@@ -167,6 +168,7 @@ function truncate(str: string, max: number) {
                     src={url}
                     alt={`Фото ${car.heading} ${i + 1}`}
                     loading="lazy"
+                    fetchpriority="low"
                   />
                   <Button
                     href={`/auction-cars/${car.slug}`}
@@ -189,6 +191,7 @@ function truncate(str: string, max: number) {
             src={JSON.parse(car.imageUrls)[0]}
             alt={`Фото ${car.heading}`}
             loading="lazy"
+            fetchpriority="low"
           />
           {car.saleDate && (
             <section
