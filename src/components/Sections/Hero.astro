@@ -1,17 +1,45 @@
 ---
-import type { SanityDocument } from "@sanity/client";
-import { loadQuery } from "@sanity/lib/load-query";
+import { Image } from "astro:assets";
 
-import SanityImg from "@components/Sanity/SanityImg.astro";
+import heroBmw from "@assets/images/hero-bmw.webp";
+import heroMerc from "@assets/images/hero-merc.webp";
+import heroTundra from "@assets/images/hero-tundra.webp";
+
 import SectionHeading from "@components/UI/SectionHeading.astro";
 import Button from "@components/UI/Button.astro";
 import LastSlide from "@components/UI/LastSlide.astro";
 
 const { h1, descr, button1, button2 } = Astro.props;
 
-const { data: cars } = await loadQuery<SanityDocument[]>({
-  query: `*[_type == "availableCars" && showOnHero == true && sold != true] | order(_createdAt desc)[0...3]`,
-});
+const cars = [
+  {
+    title: "BMW 435 Xdrive GT 2016",
+    slug: "/available-cars/bmw-435-xdrive-gt-2016/",
+    odometer: 174000,
+    fuelType: "Бензин",
+    year: 2016,
+    driveType: "4x4 (AWD/4WD)",
+    image: heroBmw,
+  },
+  {
+    title: "Mercedes-Benz GLA-Class, 250 4Matic",
+    slug: "/available-cars/mercedes-benz-gla-class-250-4matic/",
+    odometer: 51500,
+    fuelType: "Бензин",
+    year: 2021,
+    driveType: "4x4 (AWD/4WD)",
+    image: heroMerc,
+  },
+  {
+    title: "Toyota Tundra 5.7 /V 8/ 4 x 4",
+    slug: "/available-cars/toyota-tundra-5-7-v-8-4-x-4/",
+    odometer: 260000,
+    fuelType: "Бензин",
+    year: 2012,
+    driveType: "4x4",
+    image: heroTundra,
+  },
+];
 ---
 
 <section id="hero" class="card">
@@ -54,7 +82,7 @@ const { data: cars } = await loadQuery<SanityDocument[]>({
               <SectionHeading headingLevel="h3">
                 <a
                   class="stretched-link block"
-                  href={`/available-cars/${car.slug.current}`}
+                  href={car.slug}
                 >
                   {car.title}
                 </a>
@@ -82,13 +110,11 @@ const { data: cars } = await loadQuery<SanityDocument[]>({
                   <dd>{car.driveType}</dd>
                 </div>
               </dl>
-              <SanityImg
-                image={car.imageForHero}
+              <Image
+                src={car.image}
                 alt={`Фото ${car.title}`}
-                aspectRatio={{ mobile: 1, tablet: 1, desktop: 9 / 16 }}
-                style="absolute inset-0 bottom-1/8 -z-1"
+                class="absolute inset-0 bottom-1/8 -z-1 w-full h-full object-cover"
                 loading={index === 0 ? "eager" : "lazy"}
-                priority={index === 0}
               />
             </article>
           </li>

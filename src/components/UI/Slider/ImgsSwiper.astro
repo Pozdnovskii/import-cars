@@ -28,7 +28,7 @@ const {
               <SanityImg
                 image={img}
                 alt={img.alt || `Car image ${index + 1}`}
-                loading={index === 0 ? "eager" : "lazy"}
+                loading="eager"
                 priority={index === 0}
                 sizes={{
                   small: 350,
