@@ -93,6 +93,7 @@
 
   [data-gallery] {
     @apply opacity-0 transition-all duration-400;
+    view-transition-name: none;
     /* button {
         @apply max-w-1/4;
       } */
