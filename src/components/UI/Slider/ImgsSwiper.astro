@@ -115,4 +115,7 @@ const {
 
   document.addEventListener("astro:before-preparation", destroyCarGallery);
   document.addEventListener("astro:page-load", initCarGallery);
+
+  // Init immediately for View Transitions navigation
+  initCarGallery();
 </script>
