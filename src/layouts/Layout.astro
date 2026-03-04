@@ -128,3 +128,21 @@ const websiteSchema = {
     <Footer contacts={contacts} />
   </body>
 </html>
+
+<script>
+  document.addEventListener("astro:page-load", async () => {
+    const gallery = document.getElementById("photo-gallery");
+    if (!gallery) return;
+
+    const { initCarGallery } = await import("@scripts/swiper");
+    initCarGallery();
+  });
+
+  document.addEventListener("astro:before-preparation", async () => {
+    const gallery = document.getElementById("photo-gallery");
+    if (!gallery) return;
+
+    const { destroyCarGallery } = await import("@scripts/swiper");
+    destroyCarGallery();
+  });
+</script>

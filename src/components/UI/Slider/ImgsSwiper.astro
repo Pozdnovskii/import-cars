@@ -109,10 +109,3 @@ const {
     </div>
   </nav>
 </div>
-
-<script>
-  import { initCarGallery, destroyCarGallery } from "@scripts/swiper";
-
-  document.addEventListener("astro:before-preparation", destroyCarGallery);
-  document.addEventListener("astro:page-load", initCarGallery);
-</script>
