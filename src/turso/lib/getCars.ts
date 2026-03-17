@@ -1,6 +1,6 @@
 import type { Client } from "@libsql/client";
 
-export const ITEMS_PER_PAGE = 3;
+export const ITEMS_PER_PAGE = 4;
 
 interface GetCarsOptions {
   excludeSlug?: string;
