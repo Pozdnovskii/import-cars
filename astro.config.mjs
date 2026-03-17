@@ -42,6 +42,7 @@ export default defineConfig({
 
   adapter: cloudflare({
     imageService: "compile",
+    prerenderEnvironment: "node",
   }),
 
   env: {
@@ -64,30 +65,30 @@ export default defineConfig({
     },
   },
 
+  fonts: [
+    {
+      provider: fontProviders.local(),
+      name: "Jura",
+      cssVariable: "--font-jura",
+      fallbacks: ["sans-serif"],
+      options: {
+        variants: [
+          {
+            weight: 700,
+            style: "normal",
+            src: ["./src/assets/fonts/Jura-Bold.woff2"],
+          },
+          {
+            weight: 500,
+            style: "normal",
+            src: ["./src/assets/fonts/Jura-Medium.woff2"],
+          },
+        ],
+      },
+    },
+  ],
+
   experimental: {
     svgo: true,
-    preserveScriptOrder: true,
-    fonts: [
-      {
-        provider: fontProviders.local(),
-        name: "Jura",
-        cssVariable: "--font-jura",
-        fallbacks: ["sans-serif"],
-        options: {
-          variants: [
-            {
-              weight: 700,
-              style: "normal",
-              src: ["./src/assets/fonts/Jura-Bold.woff2"],
-            },
-            {
-              weight: 500,
-              style: "normal",
-              src: ["./src/assets/fonts/Jura-Medium.woff2"],
-            },
-          ],
-        },
-      },
-    ],
   },
 });

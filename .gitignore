@@ -32,3 +32,4 @@ pnpm-debug.log*
 
 # sanity
 .sanity/
+.wrangler/
