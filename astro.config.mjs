@@ -12,6 +12,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   site: "https://cars.weblateweb.dev",
 
+  build: {
+    client: "./",
+    server: "./_worker.js",
+  },
+
   vite: {
     plugins: [tailwindcss()],
     resolve: {
@@ -47,6 +52,12 @@ export default defineConfig({
 
   env: {
     schema: {
+      PUBLIC_ENABLE_ANALYTICS: envField.boolean({
+        context: "client",
+        access: "public",
+        default: false,
+      }),
+
       DEPLOY_HOOK: envField.string({
         context: "server",
         access: "secret",

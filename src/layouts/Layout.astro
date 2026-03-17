@@ -1,6 +1,7 @@
 ---
 import { Font } from "astro:assets";
 import { ClientRouter } from "astro:transitions";
+import { PUBLIC_ENABLE_ANALYTICS } from "astro:env/client";
 
 import "@styles/global.css";
 
@@ -36,7 +37,7 @@ const ogImageURL = new URL(image, Astro.site).href;
 const prevURL = prevPage ? new URL(prevPage, Astro.site).href : null;
 const nextURL = nextPage ? new URL(nextPage, Astro.site).href : null;
 
-const enableAnalytics = import.meta.env.PUBLIC_ENABLE_ANALYTICS === "true";
+const enableAnalytics = PUBLIC_ENABLE_ANALYTICS;
 
 const organizationSchema = {
   "@context": "https://schema.org",
